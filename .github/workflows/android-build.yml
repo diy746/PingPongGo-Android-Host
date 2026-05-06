@@ -39,7 +39,8 @@ jobs:
 
       - name: Build debug APK with full logs
         run: |
-          gradle assembleDebug --stacktrace --info --warning-mode all
+          mkdir -p ci-logs
+gradle assembleDebug --stacktrace --info --warning-mode all 2>&1 | tee ci-logs/gradle-build.log
 
       - name: List APK outputs
         if: always()
@@ -52,3 +53,11 @@ jobs:
         with:
           name: PingPongGo-Host-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+
+
+      - name: Upload diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostic-logs
+          path: ci-logs/**
