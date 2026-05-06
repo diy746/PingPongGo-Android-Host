@@ -43,6 +43,7 @@ jobs:
       - name: Build debug APK with full logs
         run: |
           mkdir -p ci-logs
+          set -o pipefail
           gradle assembleDebug --stacktrace --info --warning-mode all 2>&1 | tee ci-logs/gradle-build.log
 
       - name: List APK outputs
