@@ -17,7 +17,7 @@ jobs:
         run: |
           pwd
           ls -lah
-          find app -maxdepth 5 -type f | sort | head -300
+          find app/src/main -maxdepth 5 -type f | sort | head -300
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -37,8 +37,7 @@ jobs:
 
       - name: Print build log if failed
         if: failure()
-        run: |
-          cat ci-logs/gradle-build.log
+        run: cat ci-logs/gradle-build.log
 
       - name: Upload logs
         if: always()

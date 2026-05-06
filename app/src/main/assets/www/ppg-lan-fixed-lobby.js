@@ -1,10 +1,6 @@
 (function () {
   console.log("[PPG LAN] patch active");
 
-  function fixedGuestUrl() {
-    return "http://" + location.host + "/index.html?id=GUEST";
-  }
-
   function patch() {
     if (!window.netLib) {
       setTimeout(patch, 200);
@@ -19,19 +15,19 @@
       Object.defineProperty(nl, "shareURL", {
         configurable: true,
         get: function () {
-          return fixedGuestUrl();
+          return "http://" + location.host + "/index.html?id=GUEST";
         },
         set: function () {}
       });
       console.log("[PPG LAN] invite URL ready");
     } catch (e) {
-      console.warn("[PPG LAN] shareURL patch failed", e);
+      nl.shareURL = "http://" + location.host + "/index.html?id=GUEST";
     }
 
     nl.createLobby = function () {
       this.lobbyCode = "GUEST";
+      this.playerNum = 0;
       console.log("[PPG LAN] host fixed lobby GUEST");
-
       this.network.create({
         code: "GUEST",
         codeFormat: "fixed",
@@ -40,17 +36,25 @@
       });
     };
 
+    var originalJoin = nl.joinLobby;
+    nl.joinLobby = function () {
+      this.lobbyCode = "GUEST";
+      this.playerNum = 1;
+      console.log("[PPG LAN] joining fixed lobby GUEST");
+      return originalJoin ? originalJoin.apply(this, arguments) : this.network.join("GUEST");
+    };
+
     if (window.__ppgLanConnectStarted) return;
     window.__ppgLanConnectStarted = true;
 
     var id = new URLSearchParams(location.search).get("id");
-
     setTimeout(function () {
       if (id === "GUEST") {
         console.log("[PPG LAN] guest auto joining GUEST");
         nl.lobbyCode = "GUEST";
         nl.connect("joinLobby");
       } else {
+        console.log("[PPG LAN] host auto creating GUEST invitation");
         nl.lobbyCode = "GUEST";
         nl.connect("createLobby");
       }
