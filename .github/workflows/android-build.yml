@@ -1,12 +1,9 @@
-name: Build Android APK - Diagnostic
+name: Build Android APK
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -19,37 +16,36 @@ jobs:
       - name: Show files
         run: |
           pwd
-          find . -maxdepth 4 -type f | sort | head -300
+          ls -lah
+          find app -maxdepth 5 -type f | sort | head -200
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Set up Gradle 8.9
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.9
 
-      - name: Check project files
-        run: |
-          test -f settings.gradle.kts
-          test -f build.gradle.kts
-          test -f app/build.gradle.kts
-          test -f app/src/main/AndroidManifest.xml
-          test -d app/src/main/assets/www
-
-      - name: Build debug APK with full logs
+      - name: Build debug APK
         run: |
           mkdir -p ci-logs
-          set -o pipefail
-          gradle assembleDebug --stacktrace --info --warning-mode all 2>&1 | tee ci-logs/gradle-build.log
+          gradle assembleDebug --stacktrace --warning-mode all --console plain > ci-logs/gradle-build.log 2>&1
 
-      - name: List APK outputs
-        if: always()
+      - name: Print build log if failed
+        if: failure()
         run: |
-          find app/build -type f | sort | tail -200 || true
+          cat ci-logs/gradle-build.log
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostic-logs
+          path: ci-logs/gradle-build.log
 
       - name: Upload APK
         if: success()
@@ -57,10 +53,3 @@ jobs:
         with:
           name: PingPongGo-Host-debug-apk
           path: app/build/outputs/apk/debug/*.apk
-
-      - name: Upload diagnostic logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: diagnostic-logs
-          path: ci-logs/**
