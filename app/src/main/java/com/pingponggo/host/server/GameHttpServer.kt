@@ -14,16 +14,52 @@ class GameHttpServer(
 
     override fun serve(session: IHTTPSession): Response {
         val uri = session.uri.trimStart('/')
+
         return try {
             when {
                 uri == "" -> serveAsset("index.html")
+                uri == "__health" -> html("OK: PingPongGo HTTP server is running")
+                uri == "ppg-test.html" -> html(testPage())
                 uri == "download/PingPongGo-LAN.zip" -> serveZip()
                 else -> serveAsset(uri)
             }
         } catch (e: Exception) {
-            newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "404: ${session.uri}")
+            newFixedLengthResponse(
+                Response.Status.NOT_FOUND,
+                "text/plain",
+                "404: ${session.uri}\n${e.javaClass.simpleName}: ${e.message}"
+            )
         }
     }
+
+    private fun html(body: String): Response {
+        return newFixedLengthResponse(
+            Response.Status.OK,
+            "text/html; charset=utf-8",
+            body
+        )
+    }
+
+    private fun testPage(): String = """
+        <!doctype html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>PingPongGo LAN Test</title>
+        </head>
+        <body style="font-family:sans-serif;padding:20px">
+          <h2>PingPongGo LAN Host Helper Test</h2>
+          <p><b>HTTP server works.</b></p>
+          <ul>
+            <li><a href="/__health">Health check</a></li>
+            <li><a href="/index.html">Open HOST game</a></li>
+            <li><a href="/index.html?id=GUEST">Open GUEST game</a></li>
+            <li><a href="/download/PingPongGo-LAN.zip">Download ZIP package</a></li>
+          </ul>
+        </body>
+        </html>
+    """.trimIndent()
 
     private fun serveAsset(path: String): Response {
         val cleanPath = path.removePrefix("/")

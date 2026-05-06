@@ -38,14 +38,14 @@ class MainActivity : Activity() {
 
         val status = StringBuilder()
         try {
-            httpServer = GameHttpServer(this, httpPort).also { it.start() }
+            httpServer = GameHttpServer(this, httpPort).also { it.start(fi.iki.elonen.NanoHTTPD.SOCKET_READ_TIMEOUT, false) }
             status.append("HTTP OK on :$httpPort\n")
         } catch (e: Exception) {
             status.append("HTTP ERROR: ${e.message}\n")
         }
 
         try {
-            wsServer = SignalingWsServer(wsPort).also { it.start() }
+            wsServer = SignalingWsServer(wsPort).also { it.start(fi.iki.elonen.NanoHTTPD.SOCKET_READ_TIMEOUT, false) }
             status.append("WebSocket OK on :$wsPort\n")
         } catch (e: Exception) {
             status.append("WebSocket ERROR: ${e.message}\n")
