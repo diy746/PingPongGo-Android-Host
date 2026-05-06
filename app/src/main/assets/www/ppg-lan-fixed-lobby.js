@@ -46,7 +46,7 @@
         nl.lobbyCode = "GUEST";
         nl.connect("createLobby");
       }
-    }, 500);
+    }, 800);
   }
 
   patch();
