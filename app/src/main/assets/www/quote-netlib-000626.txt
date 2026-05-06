@@ -1,0 +1,401 @@
+starsY:0,ease:"Bounce.easeOut",onComplete:function(){
+}
+}
+)}
+}
+):(this.starsX=-.3,this.starsTween=TweenLite.to(this,1,{
+starsX:0,ease:"Elastic.easeOut"}
+))}
+,t.prototype.tweenTargetGameComplete=function(){
+this.levelCompleteTween&&this.levelCompleteTween.kill(),this.levelCompleteInc=1,this.levelCompleteTween=TweenLite.to(this,.5,{
+levelCompleteInc:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+),Math.round(curTargetScore/2)>0&&(this.aWinGems=[],this.winGemTarg=Math.round(curTargetScore/2),this.winGemCount=this.winGemTarg+30,setTimeout(function(){
+playSound("gemTweenOut")}
+,800))}
+,t.prototype.tweenBugGameComplete=function(){
+this.levelCompleteTween&&this.levelCompleteTween.kill(),this.levelCompleteInc=1,this.levelCompleteTween=TweenLite.to(this,.5,{
+levelCompleteInc:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+),Math.ceil(bugScore/4)>0&&(this.aWinGems=[],this.winGemTarg=Math.ceil(bugScore/4),this.winGemCount=this.winGemTarg+30,setTimeout(function(){
+playSound("gemTweenOut")}
+,800))}
+,t.prototype.addBugTime=function(){
+var e=this;
+bugTime=Math.max(bugTime-bugBonusTime,0),this.bugTimeTween&&this.bugTimeTween.kill(),this.bugTimeY=1,this.bugTimeTween=TweenLite.to(this,.5,{
+bugTimeY:0,ease:"Cubic.easeOut",onComplete:function(){
+e.bugTimeTween=TweenLite.to(e,.5,{
+bugTimeY:-1,delay:1,ease:"Cubic.easeIn",onComplete:function(){
+e.bugTimeY=1}
+}
+)}
+}
+)}
+,t.prototype.tweenPvpGameComplete=function(){
+this.levelCompleteTween&&this.levelCompleteTween.kill(),this.levelCompleteInc=1,this.levelCompleteTween=TweenLite.to(this,.5,{
+levelCompleteInc:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+),this.aWinGems=[],userScore>enemyScore?this.winGemTarg=userScore+25:this.winGemTarg=enemyScore,setTimeout(function(){
+playSound("gemTweenOut")}
+,800),this.winGemCount=this.winGemTarg+30}
+,t.prototype.tweenCustomGameComplete=function(){
+this.levelCompleteTween&&this.levelCompleteTween.kill(),this.levelCompleteInc=1,this.levelCompleteTween=TweenLite.to(this,.5,{
+levelCompleteInc:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+),this.aWinGems=[],userSets>enemySets?this.winGemTarg=50+10*saveDataHandler.getSeason()+saveDataHandler.getRound():this.winGemTarg=25,setTimeout(function(){
+playSound("gemTweenOut")}
+,800),this.winGemCount=this.winGemTarg+30}
+,t.prototype.tweenTargetGameScore=function(){
+this.starsTween&&this.starsTween.kill(),this.starsY=1,this.starsTween=TweenLite.to(this,.5,{
+starsY:0,ease:"Bounce.easeOut"}
+)}
+,t.prototype.tweenCustomGameScore=function(e){
+var t;
+this.starsTween&&this.starsTween.kill(),this["scoreSideY"+e]=1,this.starsTween=TweenLite.to(this,.5,((t={
+}
+)["scoreSideY"+e]=0,t.ease="Bounce.easeOut",t))}
+,t.prototype.tweenLevelComplete=function(){
+if(this.levelCompleteTween&&this.levelCompleteTween.kill(),this.levelCompleteInc=1,this.levelCompleteTween=TweenLite.to(this,.5,{
+levelCompleteInc:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+),this.aWinGems=[],(curLevel+1)%levelsPerWorld==0){
+this.winGemTarg=aPointScores[1];
+for(var e=Math.floor((curLevel+1)/levelsPerWorld),t=0;
+t<aBatData.length;
+t++)if(aBatData[t].unlockWorld==e){
+batUnlockedId=t;
+break}
+}
+else this.winGemTarg=aPointScores[0];
+setTimeout(function(){
+playSound("gemTweenOut")}
+,800),this.winGemCount=this.winGemTarg+30}
+,t.prototype.tweenWorldComplete=function(){
+this.levelCompleteTween&&this.levelCompleteTween.kill(),this.levelCompleteInc=1,this.levelCompleteTween=TweenLite.to(this,.5,{
+levelCompleteInc:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+),this.batScale=3,TweenLite.to(this,1.5,{
+batScale:1.5,ease:"Back.easeIn",onComplete:function(){
+}
+}
+)}
+,t.prototype.tweenGem=function(){
+TweenLite.to(this,.5,{
+levelCompleteInc:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+)}
+,t.prototype.startTut=function(){
+var e=this;
+this.userBatX=-50,this.userBatY=85,this.enemyBatX=0,this.enemyBatY=-130,this.ballX=0,this.ballY=19,TweenLite.to(this,.55,{
+delay:.35,userBatX:50,userBatY:-60,ease:"Back.easeOut",onComplete:function(){
+e.movePlayerBat(0)}
+}
+),TweenLite.to(this,.5,{
+delay:.8,enemyBatX:50,ease:"Back.easeOut",onComplete:function(){
+}
+}
+),this.ballHeight=30,TweenLite.to(this,.55,{
+delay:.5,ballX:30,ballY:-100,ease:"Linear.easeNone",onComplete:function(){
+}
+}
+),TweenLite.to(this,.6,{
+delay:.6,ballHeight:-30,ease:"Quad.easeIn",onComplete:function(){
+}
+}
+)}
+,t.prototype.movePlayerBat=function(e){
+var t=this;
+switch(e){
+case 0:TweenLite.to(this,.5,{
+userBatX:130,userBatY:85,ease:"Quad.easeInOut",onComplete:function(){
+t.movePlayerBat(1)}
+}
+),TweenLite.to(this,.65,{
+delay:.25,ballX:75,ballY:50,ease:"Quad.easeIn",onComplete:function(){
+TweenLite.to(t,.65,{
+ballX:-20,ballY:-100,ease:"Quad.easeOut",onComplete:function(){
+}
+}
+)}
+}
+),TweenLite.to(this,.65,{
+delay:.25,ballHeight:40,ease:"Quad.easeIn",onComplete:function(){
+TweenLite.to(t,.65,{
+ballHeight:-30,ease:"Quad.easeIn",onComplete:function(){
+}
+}
+)}
+}
+);
+break;
+case 1:TweenLite.to(this,.5,{
+delay:.3,userBatX:-30,userBatY:-60,ease:"Back.easeOut",onComplete:function(){
+t.movePlayerBat(2)}
+}
+),TweenLite.to(this,.5,{
+delay:.8,enemyBatX:-30,ease:"Back.easeOut",onComplete:function(){
+}
+}
+);
+break;
+case 2:TweenLite.to(this,.5,{
+userBatX:-130,userBatY:85,ease:"Quad.easeInOut",onComplete:function(){
+t.movePlayerBat(3)}
+}
+),TweenLite.to(this,.65,{
+delay:.25,ballX:-75,ballY:50,ease:"Quad.easeIn",onComplete:function(){
+TweenLite.to(t,.65,{
+ballX:20,ballY:-100,ease:"Quad.easeOut",onComplete:function(){
+}
+}
+)}
+}
+),TweenLite.to(this,.65,{
+delay:.25,ballHeight:40,ease:"Quad.easeIn",onComplete:function(){
+TweenLite.to(t,.65,{
+ballHeight:-30,ease:"Quad.easeIn",onComplete:function(){
+}
+}
+)}
+}
+);
+break;
+case 3:TweenLite.to(this,.5,{
+delay:.3,userBatX:30,userBatY:-60,ease:"Back.easeOut",onComplete:function(){
+t.movePlayerBat(0)}
+}
+),TweenLite.to(this,.5,{
+delay:.8,enemyBatX:30,ease:"Back.easeOut",onComplete:function(){
+}
+}
+)}
+}
+,t.prototype.switchBut=function(e,t,a,s,i){
+void 0===s&&(s=null),void 0===i&&(i=null);
+for(var r=null,o=0;
+o<this.aButs.length;
+o++)this.aButs[o].id==e&&(this.aButs[o].id=t,this.aButs[o].idOver=a,r=this.aButs[o],s&&(this.aButs[o].aPos=s),i&&(this.aButs[o].align=i));
+return r}
+,t.prototype.removeBut=function(e){
+for(var t=0;
+t<this.aButs.length;
+t++)this.aButs[t].id==e&&(this.aButs.splice(t,1),t-=1)}
+,t.prototype.render=function(t){
+var a=this;
+switch(void 0===t&&(t=!0),t||this.addButs(),gameState){
+
+case"splash":break;
+
+case"network":ctx.fillStyle="rgba(0, 0, 0, 0.5)",ctx.fillRect(0,0,canvas.width,canvas.height);
+var s=0,i="#000000",r="#FFFFFF";
+1==this.linkTextId&&(addText(0,50,canvas.width-200,"center",canvas.width/2,canvas.height/2-30,"waiting","#FFFFFF"),addText(1,50,canvas.width-200,"center",canvas.width/2,canvas.height/2+20,"join","#FFFF00"),Math.sin(this.incY)>0&&(s=1),r="#000000",i="#FFFFFF");
+var o=getSpriteData(assetLib.getData("uiElements"),"shareHeader"+s);
+ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,canvas.width/2-o.bWidth/2,canvas.height/2-250,o.bWidth,o.bHeight);
+var n=netLib.shareURL;
+""==n&&(n=assetLib.textData.langText.creating[curLang]);
+var l=Math.min(getDirectWidth(1,40,n),canvas.width-200)+40;
+if(ctx.fillStyle=r,ctx.fillRect(canvas.width/2-l/2,canvas.height/2+70-12,l,60),ctx.strokeStyle=i,ctx.lineWidth=2,ctx.strokeRect(canvas.width/2-l/2,canvas.height/2+70-12,l,60),addDirectText(1,40,canvas.width-200,"center",canvas.width/2,canvas.height/2+100,n,i),0==this.linkTextId)addText(0,50,canvas.width-200,"center",canvas.width/2,canvas.height/2+40,"invite","#FFFFFF"),this.shareButOn&&addText(0,26,140,"center",canvas.width/2,canvas.height/2+320+this.butsY,"copyLink","#FFFFFF");
+else if(1==this.linkTextId){
+addText(0,50,canvas.width-200,"left",canvas.width/2-100,canvas.height/2+250,"linkSuccess","#00F981");
+var o=getSpriteData(assetLib.getData("uiElements"),"shareTick");
+ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,canvas.width/2-100-60,canvas.height/2+250-40,o.bWidth,o.bHeight)}
+else 2==this.linkTextId&&addText(0,50,canvas.width-200,"center",canvas.width/2,canvas.height/2+70,"linkError","#FF5501");
+break;
+
+case"credits":ctx.fillStyle="rgba(0, 0, 0, 0.5)",ctx.fillRect(0,0,canvas.width,canvas.height),addText(0,75,canvas.width-350,"center",canvas.width/2,80+this.butsY,"settings","#FFFFFF"),addText(0,23,canvas.width-100,"center",canvas.width/2,canvas.height-170+this.butsY,"createdBy","#ffffff");
+var m=assetLib.getData("info");
+ctx.drawImage(m.img,0,0,m.img.width,m.img.height,canvas.width/2-m.img.width/2,canvas.height-120-m.img.height/2+this.butsY,m.img.width,m.img.height),addText(0,23,canvas.width-110,"right",canvas.width-95,canvas.height-15+this.butsY,"reset","#ffffff");
+var h=.3*canvas.height;
+addText(0,50,canvas.width-100,"center",canvas.width/2,h+this.butsY,"careerSetting0","#FFFFFF"),addDirectText(0,50,canvas.width-100,"center",.5*canvas.width,h+this.butsY+81,this.twoDigit(saveDataHandler.getCareerGames()),"#FFFC01"),addText(0,50,canvas.width-100,"center",canvas.width/2,h+this.butsY+170,"careerSetting1","#FFFFFF"),addDirectText(0,50,canvas.width-100,"center",.5*canvas.width,h+this.butsY+81+170,this.twoDigit(saveDataHandler.getCareerSets()),"#FFFC01"),addDirectText(0,23,canvas.width/2,"center",canvas.width/2,canvas.height-15+this.butsY,"v2.0.1","#ffffff");
+break;
+
+case"resetConfirm":ctx.fillStyle="rgba(0, 0, 0, 0.65)",ctx.fillRect(0,0,canvas.width,canvas.height),addText(0,60,canvas.width-100,"center",canvas.width/2,canvas.height/2-100+this.butsY,"resetConfirm0","#FFFFFF"),addText(0,40,canvas.width-100,"center",canvas.width/2,canvas.height/2-40+this.butsY,"resetConfirm1","#FCEA02");
+break;
+
+case"game":if(gameplayState>=3){
+var s=0;
+0==gameVariation?3==gameplayState||4==gameplayState?s=0:(5==gameplayState||6==gameplayState)&&(s=1):(1==gameVariation||2==gameVariation||3==gameVariation||4==gameVariation)&&(s=2);
+var d=assetLib.getData("fadeBg"+s);
+ctx.save(),ctx.globalAlpha=1-this.levelCompleteInc,ctx.translate(canvas.width/2,canvas.height/2),canvas.width>canvas.height?ctx.scale(canvas.width/canvas.height,1):ctx.scale(1,canvas.height/canvas.width),ctx.scale(1.62,1.62),ctx.rotate(.05*this.incY),ctx.drawImage(d.img,0,0,d.img.width,d.img.height,-d.img.width/2,-d.img.height/2,d.img.width,d.img.height),ctx.restore()}
+if(3==gameplayState||4==gameplayState){
+var u,c,g,p,$,v,h=Math.max(onScreenY-200,60)+120,I=this.twoDigit(curLevel+1);
+addDirectText(0,75,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+3+5*Math.sin(this.incY),getText("level",0)+" "+I+" "+getText("complete",0),"#2E24B4"),addDirectText(0,75,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+5*Math.sin(this.incY),getText("level",0)+" "+I+" "+getText("complete",0),"#FFFFFF");
+for(var b=0;
+b<5;
+b++){
+c=curLevel%levelsPerWorld>=b&&b==levelsPerWorld-1?curLevel%levelsPerWorld==b&&Math.sin(this.incY)>0?3:2:b==levelsPerWorld-1?2:curLevel%levelsPerWorld>=b?curLevel%levelsPerWorld==b&&Math.sin(this.incY)>0?0:1:0;
+var o=getSpriteData(assetLib.getData("uiElements"),"progressCup"+c),_=canvas.width/2+110*b-(levelsPerWorld/2-.5)*110;
+if(ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,_-o.bWidth/2,h+120-o.bHeight+200*this.levelCompleteInc,o.bWidth,o.bHeight),b<levelsPerWorld-1){
+var o=getSpriteData(assetLib.getData("uiElements"),"progressLine0");
+ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,_-o.bWidth/2+55,h+120-o.bHeight-20+200*this.levelCompleteInc,o.bWidth,o.bHeight)}
+I=this.twoDigit(Math.floor(curLevel/levelsPerWorld)*levelsPerWorld+1+b),addDirectText(0,40,110,"center",_,h+160+200*this.levelCompleteInc,I,"#FFFFFF")}
+(curLevel+1)%levelsPerWorld==0?(g=this.twoDigit(aPointScores[1]),p=aPointScores[1]):(g=this.twoDigit(aPointScores[0]),p=aPointScores[0]),rewardGemTotal=2*p,addDirectText(0,150,canvas.width/2,"left",canvas.width/2-10,h+260+200*this.levelCompleteInc+45,g,"#FFFFFF");
+var o=getSpriteData(assetLib.getData("uiElements"),"bigGem");
+if(ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,canvas.width/2-85-o.bWidth/2*(1+.05*Math.sin(this.incY)),h-o.bHeight/2*(1-.05*Math.sin(this.incY))+250+200*this.levelCompleteInc,o.bWidth*(1+.05*Math.sin(this.incY)),o.bHeight*(1-.05*Math.sin(this.incY))),this.winGemCount-=35*delta,this.winGemCount<this.winGemTarg&&this.winGemCount>0){
+this.winGemTarg-=1;
+var B={
+x:canvas.width/2-85,y:h+250+200*this.levelCompleteInc,inc:1}
+;
+this.aWinGems.push(B),$=.5*this.winGemCount,v=125+200*Math.random(),TweenLite.to(B,.25,{
+x:B.x+v*Math.cos($),y:B.y+v*Math.sin($),ease:"Quad.easeOut",onCompleteParams:[B],onComplete:function(e){
+D=a.twoDigit(gems),TweenLite.to(e,.5,{
+x:canvas.width-getDirectWidth(0,75,D)-95+27,y:canvas.height-80+25,inc:0,ease:"Quad.easeIn",onComplete:function(){
+gems++,playSound("gem"+Math.floor(5*Math.random()),.3)}
+}
+)}
+}
+)}
+for(var b=0;
+b<this.aWinGems.length;
+b++)if(this.aWinGems[b].inc>0){
+var o=getSpriteData(assetLib.getData("uiElements"),"bigGem");
+u=.5+.5*this.aWinGems[b].inc,ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,this.aWinGems[b].x-o.bWidth/2,this.aWinGems[b].y-o.bHeight/2,o.bWidth*u,o.bHeight*u)}
+else{
+for(var f=360*Math.random()*radian,w=0;
+w<5;
+w++){
+var S=new e.Particle(this.aWinGems[b].x,this.aWinGems[b].y,1*Math.random()+1,300,f+72*w*radian,20,1,50);
+aEffects.push(S)}
+this.aWinGems.splice(b,1),b-=1,this.aWinGems.length<=0&&initLevelCompleteButs()}
+if(Math.random()>.5){
+var S=new e.Particle(canvas.width/2,h+250+200*this.levelCompleteInc,1*Math.random()+1,300,360*Math.random()*radian,20,1,200);
+aEffects.push(S)}
+4==gameplayState&&(this.incY,anyWorldBatsLeft()&&(curLevel+1)%levelsPerWorld==0?Math.sin(this.incY)>0&&addText(0,50,canvas.width-100,"center",canvas.width/2,.7*canvas.height+200+this.butsY,"batUnlocked","#FFFFFF"):(Math.sin(this.incY)>0&&addText(0,50,canvas.width-100,"center",canvas.width/2,.7*canvas.height+200+this.butsY,"nextLevel","#FFFFFF"),addText(0,26,140,"center",canvas.width-90,canvas.height-210+90+this.butsY,"batCollectionBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-390+90+this.butsY,"challengeBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-210+90+this.butsY,"careerBut","#FFFFFF"),addDirectText(0,26,140,"center",90,canvas.height-210+90+this.butsY+23,"rank "+this.twoDigit(saveDataHandler.getRank()),"#FFFC01"),addText(0,26,140,"center",90,canvas.height-570+90+this.butsY,"bugGameBut","#FFFFFF"),addText(0,26,140,"center",canvas.width-90,canvas.height-390+90+this.butsY,"pvpBut","#FFFFFF")))}
+else if(5==gameplayState||6==gameplayState){
+var h=Math.max(onScreenY-200,60)+120,y=Math.floor((curLevel+1)/levelsPerWorld),I=this.twoDigit(y);
+addDirectText(0,75,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+3+5*Math.sin(this.incY),getText("world",0)+" "+I+" "+getText("complete",0),"#0BFF3C"),addDirectText(0,75,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+5*Math.sin(this.incY),getText("world",0)+" "+I+" "+getText("complete",0),"#FFFFFF");
+var u=Math.min((canvas.height-500)/400,1);
+if(this.renderBat(batUnlockedId,canvas.width/2,h+270*u,u*this.batScale),Math.random()>.5){
+var S=new e.Particle(canvas.width/2,h+270*u,1*Math.random()+1,300,360*Math.random()*radian,20,1,100);
+aEffects.push(S)}
+6==gameplayState&&(addText(0,26,140,"center",canvas.width-90,canvas.height-210+90+this.butsY,"batCollectionBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-390+90+this.butsY,"challengeBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-210+90+this.butsY,"careerBut","#FFFFFF"),addDirectText(0,26,140,"center",90,canvas.height-210+90+this.butsY+23,"rank "+this.twoDigit(saveDataHandler.getRank()),"#FFFC01"),addText(0,26,140,"center",90,canvas.height-570+90+this.butsY,"bugGameBut","#FFFFFF"),addText(0,26,140,"center",canvas.width-90,canvas.height-390+90+this.butsY,"pvpBut","#FFFFFF"),addText(0,40,canvas.width,"center",canvas.width/2,h+60+200*this.levelCompleteInc,"batUnlocked","#FFFFFF"),Math.sin(this.incY)>0&&addText(0,50,canvas.width-100,"center",canvas.width/2,.7*canvas.height+200+this.butsY,"nextLevel","#FFFFFF"),Math.sin(this.incY)>0&&addText(0,40,100,"center",canvas.width-90,canvas.height-290,"new","#FFFFFF"))}
+else if(gameplayState>=7&&gameplayState<9){
+var h=Math.max(onScreenY-200,60)+30;
+if(Math.random()>.5){
+var S=new e.Particle(canvas.width/2,h+100,1*Math.random()+1,300,360*Math.random()*radian,20,1,125);
+aEffects.push(S)}
+if(addText(0,75,canvas.width-350,"center",canvas.width/2,h+200*this.levelCompleteInc,"targetsHit","#FFFFFF"),addDirectText(0,200,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+3+5*Math.sin(this.incY)+175,this.twoDigit(curTargetScore),"#F658FF"),addDirectText(0,200,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+5*Math.sin(this.incY)+175,this.twoDigit(curTargetScore),"#FFFFFF"),curTargetScore>localTargetHighscore?addText(0,50,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+340,"newBest","#FFFC01"):(addText(0,30,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+340-25,"best","#FFFC01"),addDirectText(0,75,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+340+38,this.twoDigit(saveDataHandler.getBestTargetScore()),"#FFFC01")),Math.round(curTargetScore/2)>0){
+addDirectText(0,75,canvas.width/2,"left",canvas.width/2,h+200*this.levelCompleteInc+200+50+5*Math.sin(this.incY),this.twoDigit(Math.round(curTargetScore/2)),"#FFFFFF");
+var $,v,o=getSpriteData(assetLib.getData("uiElements"),"smallGem");
+if(ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,canvas.width/2-o.bWidth,h+200*this.levelCompleteInc+190+5*Math.sin(this.incY),o.bWidth,o.bHeight),this.winGemCount-=35*delta,this.winGemCount<this.winGemTarg&&this.winGemCount>0){
+this.winGemTarg-=1;
+var B={
+x:canvas.width/2-25,y:h+200*this.levelCompleteInc+190+25,inc:1}
+;
+this.aWinGems.push(B),$=.5*this.winGemCount,v=125+200*Math.random(),TweenLite.to(B,.25,{
+x:B.x+v*Math.cos($),y:B.y+v*Math.sin($),ease:"Quad.easeOut",onCompleteParams:[B],onComplete:function(e){
+D=a.twoDigit(gems),TweenLite.to(e,.5,{
+x:canvas.width-getDirectWidth(0,75,D)-95+27,y:canvas.height-80+25,inc:0,ease:"Quad.easeIn",onComplete:function(){
+gems++,playSound("gem"+Math.floor(5*Math.random()),.3)}
+}
+)}
+}
+)}
+for(var b=0;
+b<this.aWinGems.length;
+b++)if(this.aWinGems[b].inc>0){
+var o=getSpriteData(assetLib.getData("uiElements"),"bigGem");
+u=.5+.5*this.aWinGems[b].inc,ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,this.aWinGems[b].x-o.bWidth/2,this.aWinGems[b].y-o.bHeight/2,o.bWidth*u,o.bHeight*u)}
+else{
+for(var f=360*Math.random()*radian,w=0;
+w<5;
+w++){
+var S=new e.Particle(this.aWinGems[b].x,this.aWinGems[b].y,1*Math.random()+1,300,f+72*w*radian,20,1,50);
+aEffects.push(S)}
+this.aWinGems.splice(b,1),b-=1,this.aWinGems.length<=0&&initTargetGameEndButs()}
+}
+8==gameplayState&&(Math.round(curTargetScore/2)>0?(rewardGemTotal=2*Math.round(curTargetScore/2),Math.sin(this.incY)>0&&rewardButHit):addText(0,26,140,"center",canvas.width-90,canvas.height-390+90+this.butsY,"awardsBut","#FFFFFF"),addText(0,26,140,"center",canvas.width-90,canvas.height-210+90+this.butsY,"batCollectionBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-390+90+this.butsY,"arcadeBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-210+90+this.butsY,"careerBut","#FFFFFF"),addDirectText(0,26,140,"center",90,canvas.height-210+90+this.butsY+23,"rank "+this.twoDigit(saveDataHandler.getRank()),"#FFFC01"),addText(0,26,140,"center",90,canvas.height-570+90+this.butsY,"bugGameBut","#FFFFFF"),addText(0,26,140,"center",canvas.width-90,canvas.height-390+90+this.butsY,"pvpBut","#FFFFFF"),Math.sin(this.incY)>0&&addText(0,50,canvas.width-100,"center",canvas.width/2,.7*canvas.height+200+this.butsY,"tryAgain","#FFFFFF"))}
+else if(gameplayState>=9&&gameplayState<11){
+var F,$,v,h=Math.max(onScreenY-200,60)+120;
+if(Math.random()>.5){
+var S=new e.Particle(canvas.width/2,h+100,1*Math.random()+1,300,360*Math.random()*radian,20,1,125);
+aEffects.push(S)}
+userSets>enemySets?addText(0,75,canvas.width-350,"center",canvas.width/2,h+200*this.levelCompleteInc-30,"youWon","#FFFFFF"):addText(0,75,canvas.width-350,"center",canvas.width/2,h+200*this.levelCompleteInc-30,"youLost","#FFFFFF"),addDirectText(0,200,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+3+5*Math.sin(this.incY)+175-30,userSets+"-"+enemySets,"#F658FF"),addDirectText(0,200,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+5*Math.sin(this.incY)+175-30,userSets+"-"+enemySets,"#FFFFFF"),rankChange>0?addDirectText(0,75,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+300,getText("rank",0)+" +"+rankChange,"#FFFC01"):rankChange<0&&addDirectText(0,75,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+300,getText("rank",0)+" "+rankChange,"#A34522"),F=userSets>enemySets?50+10*saveDataHandler.getSeason()+saveDataHandler.getRound():25,addDirectText(0,75,canvas.width/2,"left",canvas.width/2,h+200*this.levelCompleteInc+200+50+5*Math.sin(this.incY)-30,this.twoDigit(F),"#FFFFFF");
+var o=getSpriteData(assetLib.getData("uiElements"),"smallGem");
+if(ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,canvas.width/2-o.bWidth,h+200*this.levelCompleteInc+190+5*Math.sin(this.incY)-30,o.bWidth,o.bHeight),this.winGemCount-=35*delta,this.winGemCount<this.winGemTarg&&this.winGemCount>0){
+this.winGemTarg-=1;
+var B={
+x:canvas.width/2-25,y:h+200*this.levelCompleteInc+190+25,inc:1}
+;
+this.aWinGems.push(B),$=.5*this.winGemCount,v=125+200*Math.random(),TweenLite.to(B,.25,{
+x:B.x+v*Math.cos($),y:B.y+v*Math.sin($),ease:"Quad.easeOut",onCompleteParams:[B],onComplete:function(e){
+D=a.twoDigit(gems),TweenLite.to(e,.5,{
+x:canvas.width-getDirectWidth(0,75,D)-95+27,y:canvas.height-80+25,inc:0,ease:"Quad.easeIn",onComplete:function(){
+gems++,playSound("gem"+Math.floor(5*Math.random()),.3)}
+}
+)}
+}
+)}
+for(var b=0;
+b<this.aWinGems.length;
+b++)if(this.aWinGems[b].inc>0){
+var o=getSpriteData(assetLib.getData("uiElements"),"bigGem");
+u=.5+.5*this.aWinGems[b].inc,ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,this.aWinGems[b].x-o.bWidth/2,this.aWinGems[b].y-o.bHeight/2,o.bWidth*u,o.bHeight*u)}
+else{
+for(var f=360*Math.random()*radian,w=0;
+w<5;
+w++){
+var S=new e.Particle(this.aWinGems[b].x,this.aWinGems[b].y,1*Math.random()+1,300,f+72*w*radian,20,1,50);
+aEffects.push(S)}
+this.aWinGems.splice(b,1),b-=1,this.aWinGems.length<=0&&initCustomGameEndButs()}
+10==gameplayState&&(rewardGemTotal=userSets>enemySets?(50+10*saveDataHandler.getSeason()+saveDataHandler.getRound())*2:50,this.incY,addText(0,26,140,"center",canvas.width-90,canvas.height-210+90+this.butsY,"batCollectionBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-390+90+this.butsY,"challengeBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-210+90+this.butsY,"arcadeBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-570+90+this.butsY,"bugGameBut","#FFFFFF"),addText(0,26,140,"center",canvas.width-90,canvas.height-390+90+this.butsY,"pvpBut","#FFFFFF"),Math.sin(this.incY)>0&&addText(0,50,canvas.width-100,"center",canvas.width/2,.7*canvas.height+200+this.butsY,"next","#FFFFFF"))}
+else if(gameplayState>=11&&gameplayState<13){
+var h=Math.max(onScreenY-200,60)+30;
+if(Math.random()>.5){
+var S=new e.Particle(canvas.width/2,h+100,1*Math.random()+1,300,360*Math.random()*radian,20,1,125);
+aEffects.push(S)}
+if(addText(0,75,canvas.width-350,"center",canvas.width/2,h+200*this.levelCompleteInc,"bugsHit","#FFFFFF"),addDirectText(0,200,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+3+5*Math.sin(this.incY)+175,this.twoDigit(bugScore),"#F658FF"),addDirectText(0,200,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+5*Math.sin(this.incY)+175,this.twoDigit(bugScore),"#FFFFFF"),bugScore>localTargetHighscore?addText(0,50,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+340,"newBest","#FFFC01"):(addText(0,30,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+340-25,"best","#FFFC01"),addDirectText(0,75,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+340+38,this.twoDigit(saveDataHandler.getBestBugScore()),"#FFFC01")),Math.ceil(bugScore/4)>0){
+addDirectText(0,75,canvas.width/2,"left",canvas.width/2,h+200*this.levelCompleteInc+200+50+5*Math.sin(this.incY),this.twoDigit(Math.ceil(bugScore/4)),"#FFFFFF");
+var $,v,o=getSpriteData(assetLib.getData("uiElements"),"smallGem");
+if(ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,canvas.width/2-o.bWidth,h+200*this.levelCompleteInc+190+5*Math.sin(this.incY),o.bWidth,o.bHeight),this.winGemCount-=35*delta,this.winGemCount<this.winGemTarg&&this.winGemCount>0){
+this.winGemTarg-=1;
+var B={
+x:canvas.width/2-25,y:h+200*this.levelCompleteInc+190+25,inc:1}
+;
+this.aWinGems.push(B),$=.5*this.winGemCount,v=125+200*Math.random(),TweenLite.to(B,.25,{
+x:B.x+v*Math.cos($),y:B.y+v*Math.sin($),ease:"Quad.easeOut",onCompleteParams:[B],onComplete:function(e){
+D=a.twoDigit(gems),TweenLite.to(e,.5,{
+x:canvas.width-getDirectWidth(0,75,D)-95+27,y:canvas.height-80+25,inc:0,ease:"Quad.easeIn",onComplete:function(){
+gems++,playSound("gem"+Math.floor(5*Math.random()),.3)}
+}
+)}
+}
+)}
+for(var b=0;
+b<this.aWinGems.length;
+b++)if(this.aWinGems[b].inc>0){
+var o=getSpriteData(assetLib.getData("uiElements"),"bigGem");
+u=.5+.5*this.aWinGems[b].inc,ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,this.aWinGems[b].x-o.bWidth/2,this.aWinGems[b].y-o.bHeight/2,o.bWidth*u,o.bHeight*u)}
+else{
+for(var f=360*Math.random()*radian,w=0;
+w<5;
+w++){
+var S=new e.Particle(this.aWinGems[b].x,this.aWinGems[b].y,1*Math.random()+1,300,f+72*w*radian,20,1,50);
+aEffects.push(S)}
+this.aWinGems.splice(b,1),b-=1,this.aWinGems.length<=0&&initBugGameEndButs()}
+}
+12==gameplayState&&(Math.ceil(bugScore/4)>0?(rewardGemTotal=2*Math.ceil(bugScore/4),Math.sin(this.incY)>0&&rewardButHit):addText(0,26,140,"center",canvas.width-90,canvas.height-390+90+this.butsY,"awardsBut","#FFFFFF"),addText(0,26,140,"center",canvas.width-90,canvas.height-210+90+this.butsY,"batCollectionBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-390+90+this.butsY,"arcadeBut","#FFFFFF"),addText(0,26,140,"center",90,canvas.height-210+90+this.butsY,"careerBut","#FFFFFF"),addDirectText(0,26,140,"center",90,canvas.height-210+90+this.butsY+23,"rank "+this.twoDigit(saveDataHandler.getRank()),"#FFFC01"),addText(0,26,140,"center",90,canvas.height-570+90+this.butsY,"challengeBut","#FFFFFF"),addText(0,26,140,"center",canvas.width-90,canvas.height-390+90+this.butsY,"pvpBut","#FFFFFF"),Math.sin(this.incY)>0&&addText(0,50,canvas.width-100,"center",canvas.width/2,.7*canvas.height+200+this.butsY,"tryAgain","#FFFFFF"))}
+else if(gameplayState>=13&&gameplayState<15){
+var F,$,v,h=Math.max(onScreenY-200,60)+120;
+if(Math.random()>.5){
+var S=new e.Particle(canvas.width/2,h+100,1*Math.random()+1,300,360*Math.random()*radian,20,1,125);
+aEffects.push(S)}
+userScore>enemyScore?addText(0,75,canvas.width-350,"center",canvas.width/2,h+200*this.levelCompleteInc-30,"youWon","#FFFFFF"):addText(0,75,canvas.width-350,"center",canvas.width/2,h+200*this.levelCompleteInc-30,"youLost","#FFFFFF"),addDirectText(0,200,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+3+5*Math.sin(this.incY)+175-30,userScore+"-"+enemyScore,"#F658FF"),addDirectText(0,200,canvas.width-100,"center",canvas.width/2,h+200*this.levelCompleteInc+5*Math.sin(this.incY)+175-30,userScore+"-"+enemyScore,"#FFFFFF"),F=userScore>enemyScore?userScore+25:enemyScore,addDirectText(0,75,canvas.width/2,"left",canvas.width/2,h+200*this.levelCompleteInc+200+50+5*Math.sin(this.incY)-30,this.twoDigit(F),"#FFFFFF");
+var o=getSpriteData(assetLib.getData("uiElements"),"smallGem");
+if(ctx.drawImage(o.img,o.bX,o.bY,o.bWidth,o.bHeight,canvas.width/2-o.bWidth,h+200*this.levelCompleteInc+190+5*Math.sin(this.incY)-30,o.bWidth,o.bHeight),this.winGemCount-=35*delta,this.winGemCount<this.winGemTarg&&this.winGemCount>0){
+this.winGemTarg-=1;
+var B={
+x:canvas.width/2-25,y:h+200*this.levelCompleteInc+190+25,inc:1}
+;
+this.aWinGems.push(B),$=.5*this.winGemCount,v=125+200*Math.random(),TweenLite.to(B,.25,{
+x:B.x+v*Math.cos($),y:B.y+v*Math.sin($),ease:"Quad.easeOut",onCompleteParams:[B],onComplete:function(e){
+D=a.twoDigit(gems),TweenLite.to(e,.5,{
+x:canvas.width-getDirectWidth(0,75,D)-95+27,y:canvas.height-80+25,inc:0,ease:"Quad.easeIn",onComplete:function(){
+gems++,playSound("gem"+Math.floor(5*Math.random()),.3)}

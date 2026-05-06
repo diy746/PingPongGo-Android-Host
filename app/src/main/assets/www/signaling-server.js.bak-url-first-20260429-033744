@@ -1,0 +1,492 @@
+const http = require("http");
+const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+const { WebSocketServer } = require("ws");
+const { URL } = require("url");
+
+const PORT = process.env.SIGNAL_PORT || 8124;
+const CONFIG_PATH = path.join(process.cwd(), "config", "players.json");
+
+function loadConfig() {
+  try {
+    return JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
+  } catch {
+    return {
+      defaultLobby: "HOME",
+      maxPlayers: 8,
+      players: {
+        KAS: { name: "KAS" },
+        JAR: { name: "JAR" },
+        RAD: { name: "RAD" },
+        BAB: { name: "BAB" },
+        DZI: { name: "DZI" },
+        JAN: { name: "JAN" },
+        JAS: { name: "JAS" },
+        SUZ: { name: "SUZ" }
+      }
+    };
+  }
+}
+
+const CONFIG = loadConfig();
+const DEFAULT_LOBBY = CONFIG.defaultLobby || "HOME";
+const MAX_PLAYERS = Number(CONFIG.maxPlayers || 8);
+const KNOWN_PLAYERS = CONFIG.players || {};
+
+const clients = new Map();          // peerId -> ws
+const playerSessions = new Map();   // lobbyCode:playerCode -> ws
+const lobbies = new Map();          // code -> lobby
+
+function makeId(prefix = "") {
+  return prefix + crypto.randomBytes(4).toString("hex");
+}
+
+function normalizeCode(v) {
+  return String(v || "").trim().toUpperCase();
+}
+
+function send(ws, obj) {
+  if (ws && ws.readyState === ws.OPEN) {
+    ws.send(JSON.stringify(obj));
+  }
+}
+
+function lobbyInfo(lobby) {
+  return {
+    code: lobby.code,
+    leader: lobby.leader,
+    leaderPlayerCode: lobby.leaderPlayerCode,
+    term: lobby.term,
+    maxPlayers: lobby.maxPlayers,
+    players: [...lobby.peers],
+    playerCodes: [...lobby.playerCodes]
+  };
+}
+
+function broadcastLobby(lobby) {
+  const info = lobbyInfo(lobby);
+  for (const pid of lobby.peers) {
+    const peer = clients.get(pid);
+    if (peer) send(peer, { type: "lobbyUpdated", lobbyInfo: info });
+  }
+}
+
+function sessionKey(lobbyCode, playerCode) {
+  return `${lobbyCode}:${playerCode}`;
+}
+
+function markZombie(ws, reason = "replaced") {
+  if (!ws || ws.isZombie) return;
+  ws.isZombie = true;
+  send(ws, { type: "replaced", reason });
+  try { ws.close(); } catch {}
+}
+
+function removeFromLobby(ws) {
+  if (!ws || !ws.lobby) return;
+
+  const lobby = lobbies.get(ws.lobby);
+  if (!lobby) {
+    ws.lobby = null;
+    return;
+  }
+
+  lobby.peers.delete(ws.id);
+  if (ws.playerCode) lobby.playerCodes.delete(ws.playerCode);
+
+  const key = ws.playerCode ? sessionKey(ws.lobby, ws.playerCode) : null;
+  if (key && playerSessions.get(key) === ws) {
+    playerSessions.delete(key);
+  }
+
+  if (lobby.leader === ws.id) {
+    const nextId = [...lobby.peers][0] || null;
+    lobby.leader = nextId;
+    const nextWs = nextId ? clients.get(nextId) : null;
+    lobby.leaderPlayerCode = nextWs ? nextWs.playerCode : null;
+    lobby.term++;
+  }
+
+  for (const pid of lobby.peers) {
+    const peer = clients.get(pid);
+    if (peer) send(peer, { type: "disconnect", id: ws.id, playerCode: ws.playerCode });
+  }
+
+  if (lobby.peers.size === 0) {
+    // Personal/family mode: keep DEFAULT_LOBBY alive, delete random empty lobbies.
+    if (lobby.code !== DEFAULT_LOBBY) lobbies.delete(lobby.code);
+  } else {
+    broadcastLobby(lobby);
+  }
+
+  ws.lobby = null;
+}
+
+function ensureLobby(code) {
+  code = normalizeCode(code || DEFAULT_LOBBY);
+  let lobby = lobbies.get(code);
+  if (!lobby) {
+    lobby = {
+      code,
+      peers: new Set(),
+      playerCodes: new Set(),
+      leader: null,
+      leaderPlayerCode: null,
+      term: 1,
+      maxPlayers: MAX_PLAYERS,
+      createdAt: Date.now(),
+      lastSeen: Date.now()
+    };
+    lobbies.set(code, lobby);
+  }
+  return lobby;
+}
+
+function attachToLobby(ws, code, wantLeader = false) {
+  code = normalizeCode(code || DEFAULT_LOBBY);
+  const lobby = ensureLobby(code);
+
+  if (!ws.playerCode) {
+    send(ws, { type: "error", error: "MISSING_PLAYER_CODE" });
+    return false;
+  }
+
+  if (!KNOWN_PLAYERS[ws.playerCode]) {
+    send(ws, {
+      type: "error",
+      error: "UNKNOWN_PLAYER_CODE",
+      playerCode: ws.playerCode,
+      allowed: Object.keys(KNOWN_PLAYERS)
+    });
+    return false;
+  }
+
+  const existingDifferentPlayers = new Set(lobby.playerCodes);
+  existingDifferentPlayers.delete(ws.playerCode);
+
+  if (!lobby.playerCodes.has(ws.playerCode) && existingDifferentPlayers.size >= lobby.maxPlayers) {
+    send(ws, { type: "error", error: "LOBBY_FULL", lobby: code, maxPlayers: lobby.maxPlayers });
+    return false;
+  }
+
+  const key = sessionKey(code, ws.playerCode);
+  const old = playerSessions.get(key);
+
+  if (old && old !== ws) {
+    console.log("ZOMBIE REPLACED", {
+      lobby: code,
+      playerCode: ws.playerCode,
+      oldPeer: old.id,
+      newPeer: ws.id
+    });
+    markZombie(old, "newer session connected");
+    if (old.id) clients.delete(old.id);
+    if (old.lobby && lobbies.has(old.lobby)) {
+      const oldLobby = lobbies.get(old.lobby);
+      oldLobby.peers.delete(old.id);
+    }
+  }
+
+  playerSessions.set(key, ws);
+
+  ws.lobby = code;
+  lobby.peers.add(ws.id);
+  lobby.playerCodes.add(ws.playerCode);
+  lobby.lastSeen = Date.now();
+
+  if (wantLeader || !lobby.leader) {
+    lobby.leader = ws.id;
+    lobby.leaderPlayerCode = ws.playerCode;
+    lobby.term++;
+  }
+
+  return true;
+}
+
+function connectPeers(lobby, newcomerId) {
+  for (const pid of lobby.peers) {
+    if (pid === newcomerId) continue;
+
+    const other = clients.get(pid);
+    const newcomer = clients.get(newcomerId);
+    if (!other || !newcomer) continue;
+
+    // Leader is offerer. Non-leader is polite answerer.
+    if (pid === lobby.leader) {
+      send(other, { type: "connect", id: newcomerId, playerCode: newcomer.playerCode, polite: false, role: "leader" });
+      send(newcomer, { type: "connect", id: pid, playerCode: other.playerCode, polite: true, role: "joiner" });
+    } else if (newcomerId === lobby.leader) {
+      send(newcomer, { type: "connect", id: pid, playerCode: other.playerCode, polite: false, role: "leader" });
+      send(other, { type: "connect", id: newcomerId, playerCode: newcomer.playerCode, polite: true, role: "joiner" });
+    }
+  }
+}
+
+const server = http.createServer();
+const wss = new WebSocketServer({ server, path: "/v0/signaling" });
+
+wss.on("connection", (ws, req) => {
+  ws.urlPlayerCode = null;
+  ws.urlLobbyCode = null;
+
+  try {
+    const ref = req.headers.referer || "";
+    if (ref) {
+      const u = new URL(ref);
+      ws.urlPlayerCode = normalizeCode(
+        u.searchParams.get("player") ||
+        u.searchParams.get("p") ||
+        u.searchParams.get("code")
+      );
+      ws.urlLobbyCode = normalizeCode(
+        u.searchParams.get("join") ||
+        u.searchParams.get("lobby") ||
+        u.searchParams.get("room")
+      );
+      console.log("URL PARAMS", { player: ws.urlPlayerCode, lobby: ws.urlLobbyCode, referer: ref });
+    }
+  } catch (e) {
+    console.log("URL PARAM parse failed", e.message);
+  }
+  ws.id = null;
+  ws.secret = null;
+  ws.playerCode = null;
+  ws.sessionId = null;
+  ws.lobby = null;
+  ws.isZombie = false;
+  ws.lastSeen = Date.now();
+
+  ws.on("message", (buf) => {
+    let msg;
+    try {
+      msg = JSON.parse(buf.toString());
+    } catch {
+      return;
+    }
+
+    ws.lastSeen = Date.now();
+
+    if (ws.isZombie) {
+      console.log("DROP zombie message", ws.id, msg.type);
+      return;
+    }
+
+    console.log("IN", ws.id || "-", ws.playerCode || "-", msg.type, msg);
+
+    if (msg.type === "hello") {
+      ws.id = msg.id || makeId("p");
+      ws.secret = msg.secret || makeId("s");
+      ws.playerCode = normalizeCode(msg.playerCode || msg.player || msg.code || ws.urlPlayerCode);
+      ws.sessionId = msg.sessionId || makeId("sess");
+
+      if (!ws.playerCode) {
+        send(ws, {
+          type: "needPlayerCode",
+          allowed: Object.keys(KNOWN_PLAYERS),
+          defaultLobby: DEFAULT_LOBBY
+        });
+        return;
+      }
+
+      if (!KNOWN_PLAYERS[ws.playerCode]) {
+        send(ws, {
+          type: "error",
+          error: "UNKNOWN_PLAYER_CODE",
+          playerCode: ws.playerCode,
+          allowed: Object.keys(KNOWN_PLAYERS)
+        });
+        return;
+      }
+
+      clients.set(ws.id, ws);
+
+      send(ws, {
+        type: "welcome",
+        id: ws.id,
+        secret: ws.secret,
+        playerCode: ws.playerCode,
+        sessionId: ws.sessionId,
+        defaultLobby: DEFAULT_LOBBY,
+        allowed: Object.keys(KNOWN_PLAYERS)
+      });
+      return;
+    }
+
+    if (!ws.id) {
+      send(ws, { type: "error", error: "HELLO_REQUIRED" });
+      return;
+    }
+
+    if (msg.type === "ping") {
+      send(ws, { type: "ping" });
+      return;
+    }
+
+    if (msg.type === "credentials") {
+      send(ws, { type: "credentials", id: ws.id, playerCode: ws.playerCode });
+      return;
+    }
+
+    if (msg.type === "create") {
+      const code = normalizeCode(msg.lobby || msg.code || ws.urlLobbyCode || DEFAULT_LOBBY);
+
+      if (!attachToLobby(ws, code, true)) return;
+
+      const lobby = lobbies.get(code);
+      fs.writeFileSync("current-lobby.txt", code + "\n");
+
+      send(ws, {
+        type: "joined",
+        rid: msg.rid,
+        lobbyInfo: lobbyInfo(lobby)
+      });
+
+      broadcastLobby(lobby);
+      connectPeers(lobby, ws.id);
+
+      console.log("CREATED/REUSED LOBBY", code, "leader", ws.id, "player", ws.playerCode);
+      return;
+    }
+
+    if (msg.type === "join" || msg.type === "resume") {
+      const code = normalizeCode(msg.lobby || msg.code || ws.urlLobbyCode || DEFAULT_LOBBY);
+
+      // In family mode HOME can auto-exist. Other unknown rooms are errors.
+      if (!lobbies.has(code) && code !== DEFAULT_LOBBY) {
+        send(ws, { type: "error", error: "LOBBY_NOT_FOUND", lobby: code });
+        return;
+      }
+
+      if (!attachToLobby(ws, code, false)) return;
+
+      const lobby = lobbies.get(code);
+
+      send(ws, {
+        type: "joined",
+        rid: msg.rid,
+        lobbyInfo: lobbyInfo(lobby)
+      });
+
+      connectPeers(lobby, ws.id);
+      broadcastLobby(lobby);
+
+      console.log("JOINED/RESUMED LOBBY", code, "peer", ws.id, "player", ws.playerCode);
+      return;
+    }
+
+    if (msg.type === "leave") {
+      removeFromLobby(ws);
+      return;
+    }
+
+    if (msg.type === "description" || msg.type === "candidate") {
+      const lobby = ws.lobby ? lobbies.get(ws.lobby) : null;
+      const target = clients.get(msg.recipient);
+
+      if (!lobby) {
+        console.log("DROP signal without lobby", ws.id, msg.type);
+        return;
+      }
+
+      if (!target || target.lobby !== ws.lobby) {
+        console.log("DROP cross/stale signal", {
+          from: ws.id,
+          to: msg.recipient,
+          type: msg.type,
+          lobby: ws.lobby
+        });
+        return;
+      }
+
+      if (msg.type === "description" && msg.description?.type === "offer" && lobby.leader !== ws.id) {
+        console.log("DROP non-leader offer", {
+          from: ws.id,
+          playerCode: ws.playerCode,
+          leader: lobby.leader,
+          lobby: lobby.code
+        });
+        return;
+      }
+
+      if (msg.type === "description" && msg.description?.type === "answer" && lobby.leader === ws.id) {
+        console.log("DROP leader answer", {
+          from: ws.id,
+          playerCode: ws.playerCode,
+          lobby: lobby.code
+        });
+        return;
+      }
+
+      send(target, {
+        ...msg,
+        source: ws.id,
+        sourcePlayerCode: ws.playerCode,
+        lobby: ws.lobby
+      });
+      return;
+    }
+
+    if (msg.type === "event") {
+      if (ws.lobby && lobbies.has(ws.lobby)) {
+        for (const pid of lobbies.get(ws.lobby).peers) {
+          if (pid !== ws.id) {
+            const peer = clients.get(pid);
+            if (peer) send(peer, { ...msg, source: ws.id, sourcePlayerCode: ws.playerCode });
+          }
+        }
+      }
+      return;
+    }
+
+    if (msg.type === "adminClearZombies") {
+      let killed = 0;
+      for (const [pid, peer] of clients) {
+        if (peer.isZombie || Date.now() - peer.lastSeen > 30000) {
+          killed++;
+          markZombie(peer, "admin cleanup");
+          clients.delete(pid);
+        }
+      }
+      send(ws, { type: "adminClearZombiesDone", killed });
+      return;
+    }
+
+    send(ws, { type: "error", error: "UNKNOWN_MESSAGE_TYPE", got: msg.type });
+  });
+
+  ws.on("close", () => {
+    if (ws.id) clients.delete(ws.id);
+
+    if (ws.isZombie) return;
+
+    removeFromLobby(ws);
+  });
+});
+
+setInterval(() => {
+  const now = Date.now();
+
+  for (const [pid, ws] of clients) {
+    if (now - ws.lastSeen > 45000) {
+      console.log("TIMEOUT zombie/dead client", pid, ws.playerCode);
+      markZombie(ws, "timeout");
+      clients.delete(pid);
+      removeFromLobby(ws);
+    }
+  }
+
+  for (const [code, lobby] of lobbies) {
+    if (code !== DEFAULT_LOBBY && lobby.peers.size === 0 && now - lobby.lastSeen > 10 * 60 * 1000) {
+      lobbies.delete(code);
+    }
+  }
+}, 10000);
+
+ensureLobby(DEFAULT_LOBBY);
+
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`family lighthouse signaling ws://0.0.0.0:${PORT}/v0/signaling`);
+  console.log(`default lobby: ${DEFAULT_LOBBY}`);
+  console.log(`known players: ${Object.keys(KNOWN_PLAYERS).join(", ")}`);
+});

@@ -1,0 +1,9 @@
+{
+  "maxPlayers": 2,
+  "allowedLobbies": [
+    "KAS", "JAR", "RAD", "BAB", "DZI",
+    "JAN", "JAS", "KRZ", "BAR", "GRA",
+    "GRZ", "STA", "JWB", "SUZ", "ZBY",
+    "PRZ", "MAC", "LAS", "DOG", "RAM"
+  ]
+}

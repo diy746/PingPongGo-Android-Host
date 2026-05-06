@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+BASE="$(cd "$(dirname "$0")" && pwd)"
+cd "$BASE"
+
+./stop.sh || true
+rm -f .stop
+
+PORT="${PORT:-8123}"
+HOST="127.0.0.1"
+URL="http://$HOST:$PORT/index.html"
+
+serve_frankenphp() {
+  command -v frankenphp >/dev/null 2>&1 || return 1
+  frankenphp php-server -l "$HOST:$PORT" -r "$BASE" >logs/server.log 2>&1 &
+}
+
+serve_caddy() {
+  command -v caddy >/dev/null 2>&1 || return 1
+  caddy file-server --listen "$HOST:$PORT" --root "$BASE" >logs/server.log 2>&1 &
+}
+
+serve_python3() {
+  command -v python3 >/dev/null 2>&1 || return 1
+  python3 -m http.server "$PORT" --bind "$HOST" >logs/server.log 2>&1 &
+}
+
+serve_python() {
+  command -v python >/dev/null 2>&1 || return 1
+  python -m http.server "$PORT" --bind "$HOST" >logs/server.log 2>&1 &
+}
+
+serve_busybox() {
+  command -v busybox >/dev/null 2>&1 || return 1
+  busybox httpd -f -p "$HOST:$PORT" -h "$BASE" >logs/server.log 2>&1 &
+}
+
+mkdir -p logs
+
+if serve_frankenphp || serve_caddy || serve_python3 || serve_python || serve_busybox; then
+  echo $! > .server.pid
+else
+  echo "No server available"
+  exit 1
+fi
+
+sleep 0.7
+
+BROWSER_FLAGS=(
+  --new-window
+  --disable-background-networking
+  --disable-features=Translate,MediaRouter
+  --autoplay-policy=no-user-gesture-required
+  --user-data-dir="$BASE/.browser-profile"
+  "$URL"
+)
+
+if command -v electron >/dev/null 2>&1; then
+  electron "$URL" >logs/browser.log 2>&1 &
+elif command -v brave >/dev/null 2>&1; then
+  brave "${BROWSER_FLAGS[@]}" >logs/browser.log 2>&1 &
+elif command -v brave-browser >/dev/null 2>&1; then
+  brave-browser "${BROWSER_FLAGS[@]}" >logs/browser.log 2>&1 &
+elif command -v chromium >/dev/null 2>&1; then
+  chromium "${BROWSER_FLAGS[@]}" >logs/browser.log 2>&1 &
+elif command -v google-chrome-stable >/dev/null 2>&1; then
+  google-chrome-stable "${BROWSER_FLAGS[@]}" >logs/browser.log 2>&1 &
+elif command -v microsoft-edge-stable >/dev/null 2>&1; then
+  microsoft-edge-stable "${BROWSER_FLAGS[@]}" >logs/browser.log 2>&1 &
+elif command -v opera >/dev/null 2>&1; then
+  opera "${BROWSER_FLAGS[@]}" >logs/browser.log 2>&1 &
+else
+  echo "Open manually: $URL"
+  wait "$(cat .server.pid)"
+  exit 0
+fi
+
+echo $! > .browser.pid
+echo "RUNNING: $URL"
+echo "Logs: $BASE/logs/server.log / browser.log"

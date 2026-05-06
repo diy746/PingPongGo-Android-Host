@@ -1,0 +1,14 @@
+{
+  "defaultLobby": "HOME",
+  "maxPlayers": 8,
+  "players": {
+    "KAS": { "name": "KAS" },
+    "JAR": { "name": "JAR" },
+    "RAD": { "name": "RAD" },
+    "BAB": { "name": "BAB" },
+    "DZI": { "name": "DZI" },
+    "JAN": { "name": "JAN" },
+    "JAS": { "name": "JAS" },
+    "SUZ": { "name": "SUZ" }
+  }
+}

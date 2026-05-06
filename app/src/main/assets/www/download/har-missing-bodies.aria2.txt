@@ -1,0 +1,573 @@
+https://poki.com/pl/g/ping-pong-go?gdid=TE9V
+  dir=mirror/6/poki.com/pl/g
+  out=ping-pong-go
+https://poki.com/manifest.json
+  dir=mirror/6/poki.com
+  out=manifest.json
+https://a.poki-cdn.com/fonts/proxima-nova-regular-latin.woff2
+  dir=mirror/6/a.poki-cdn.com/fonts
+  out=proxima-nova-regular-latin.woff2
+https://a.poki-cdn.com/fonts/proxima-nova-regular-latin-ext-a.woff2
+  dir=mirror/6/a.poki-cdn.com/fonts
+  out=proxima-nova-regular-latin-ext-a.woff2
+https://a.poki-cdn.com/fonts/proxima-nova-bold-latin.woff2
+  dir=mirror/6/a.poki-cdn.com/fonts
+  out=proxima-nova-bold-latin.woff2
+https://a.poki-cdn.com/fonts/proxima-nova-bold-latin-ext-a.woff2
+  dir=mirror/6/a.poki-cdn.com/fonts
+  out=proxima-nova-bold-latin-ext-a.woff2
+https://a.poki-cdn.com/fonts/torus-bold-latin.woff2
+  dir=mirror/6/a.poki-cdn.com/fonts
+  out=torus-bold-latin.woff2
+https://a.poki-cdn.com/t2.js
+  dir=mirror/6/a.poki-cdn.com
+  out=t2.js
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://a.poki-cdn.com/icons/ui-masks/ui-icons-thumbs-up.svg
+  dir=mirror/6/a.poki-cdn.com/icons/ui-masks
+  out=ui-icons-thumbs-up.svg
+https://a.poki-cdn.com/icons/ui-masks/ui-icons-thumbs-down.svg
+  dir=mirror/6/a.poki-cdn.com/icons/ui-masks
+  out=ui-icons-thumbs-down.svg
+https://a.poki-cdn.com/icons/ui-masks/ui-icons-flag.svg
+  dir=mirror/6/a.poki-cdn.com/icons/ui-masks
+  out=ui-icons-flag.svg
+https://a.poki-cdn.com/icons/ui-masks/ui-icons-fullscreen.svg
+  dir=mirror/6/a.poki-cdn.com/icons/ui-masks
+  out=ui-icons-fullscreen.svg
+https://a.poki-cdn.com/icons/ui/fav.svg
+  dir=mirror/6/a.poki-cdn.com/icons/ui
+  out=fav.svg
+https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=188,height=188,fit=cover,f=auto/a9d84b22bc87dc97bcd8ca7a60893404/cricket-world-cup.png
+  dir=mirror/6/img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=188,height=188,fit=cover,f=auto/a9d84b22bc87dc97bcd8ca7a60893404
+  out=cricket-world-cup.png
+https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=188,height=188,fit=cover,f=auto/e59cb3dd8207039fa03a8745c4917e18/little-master-cricket.png
+  dir=mirror/6/img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=188,height=188,fit=cover,f=auto/e59cb3dd8207039fa03a8745c4917e18
+  out=little-master-cricket.png
+https://a.poki-cdn.com/assets/client~vendors-7fc2cac8~adcea0959735e5e9aca1.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-7fc2cac8~adcea0959735e5e9aca1.js
+https://a.poki-cdn.com/assets/client~vendors-32ced529~1da85ee04592775978fe.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-32ced529~1da85ee04592775978fe.js
+https://a.poki-cdn.com/assets/client~vendors-c933d4bb~3bbacd135e492a2f8c49.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-c933d4bb~3bbacd135e492a2f8c49.js
+https://a.poki-cdn.com/assets/client~vendors-cdd60c62~ae45e0c3b368dac5d498.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-cdd60c62~ae45e0c3b368dac5d498.js
+https://a.poki-cdn.com/assets/client~vendors-d2eb5610~ae4a0a57a549118816f1.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-d2eb5610~ae4a0a57a549118816f1.js
+https://a.poki-cdn.com/assets/client~vendors-e768d1d9~51f3d83da8d38d3bf74a.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-e768d1d9~51f3d83da8d38d3bf74a.js
+https://a.poki-cdn.com/assets/client~vendors-f82e0cd2~80d1d3e80b78a7260f5b.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-f82e0cd2~80d1d3e80b78a7260f5b.js
+https://a.poki-cdn.com/assets/client~vendors-b48beae3~18985fb4ba8e84e6cb94.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-b48beae3~18985fb4ba8e84e6cb94.js
+https://a.poki-cdn.com/assets/client~vendors-669c86db~5604cf784213e3e86cae.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-669c86db~5604cf784213e3e86cae.js
+https://a.poki-cdn.com/assets/client~vendors-2a46b080~45a3f341aa6b792185ff.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-2a46b080~45a3f341aa6b792185ff.js
+https://a.poki-cdn.com/assets/client~vendors-b9100f55~c32fe4c85d60fbeca5d1.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-b9100f55~c32fe4c85d60fbeca5d1.js
+https://a.poki-cdn.com/assets/client~vendors-59e705dd~1d7791254d2e4d578702.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-59e705dd~1d7791254d2e4d578702.js
+https://a.poki-cdn.com/assets/client~vendors-fcb262f0~74ac6cc49a0a94c93845.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-fcb262f0~74ac6cc49a0a94c93845.js
+https://a.poki-cdn.com/assets/client~vendors-038a2d78~f9e17576424f7190530b.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-038a2d78~f9e17576424f7190530b.js
+https://a.poki-cdn.com/assets/client~vendors-df67cafc~227090781c193a1fed0d.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-df67cafc~227090781c193a1fed0d.js
+https://a.poki-cdn.com/assets/client~vendors-375fd71e~4f8ad76b3f3006e8b6ca.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-375fd71e~4f8ad76b3f3006e8b6ca.js
+https://a.poki-cdn.com/assets/client~vendors-05532fc0~6a0351115930e265e46f.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-05532fc0~6a0351115930e265e46f.js
+https://a.poki-cdn.com/assets/client~vendors-4093f53f~32181c46e83942cb092a.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-4093f53f~32181c46e83942cb092a.js
+https://a.poki-cdn.com/assets/client~vendors-761c4b13~bce7f6722b6fecf7a3d5.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-761c4b13~bce7f6722b6fecf7a3d5.js
+https://a.poki-cdn.com/assets/client~vendors-29543f88~4f4c419642c79e9243a4.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-29543f88~4f4c419642c79e9243a4.js
+https://a.poki-cdn.com/assets/client~vendors-ab7d6713~5c944336a889db464e45.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-ab7d6713~5c944336a889db464e45.js
+https://a.poki-cdn.com/assets/client~vendors-13a414ac~204f78854b1781ca9b8a.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-13a414ac~204f78854b1781ca9b8a.js
+https://a.poki-cdn.com/assets/client~vendors-221ea48c~abeedae2b67deb183fd0.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-221ea48c~abeedae2b67deb183fd0.js
+https://a.poki-cdn.com/assets/client~vendors-d9548477~69828264b6810ba1f31b.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-d9548477~69828264b6810ba1f31b.js
+https://a.poki-cdn.com/assets/client~vendors-9686a255~bafadb9eab5ba31a7043.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-9686a255~bafadb9eab5ba31a7043.js
+https://a.poki-cdn.com/assets/client~vendors-9cf24ff9~c65b925aeb4d6e969e83.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-9cf24ff9~c65b925aeb4d6e969e83.js
+https://a.poki-cdn.com/assets/client~vendors-5b69c406~2780754568dcbf7ead6e.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-5b69c406~2780754568dcbf7ead6e.js
+https://a.poki-cdn.com/assets/client~vendors-ffa6b765~ce9cdb2b447e84e5152a.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-ffa6b765~ce9cdb2b447e84e5152a.js
+https://a.poki-cdn.com/assets/client~vendors-c092ac97~bfcb4d875b40c22a25aa.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-c092ac97~bfcb4d875b40c22a25aa.js
+https://a.poki-cdn.com/assets/client~vendors-930bdb04~a629fe50f3a7d14455db.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-930bdb04~a629fe50f3a7d14455db.js
+https://a.poki-cdn.com/assets/client~vendors-5178c671~fc70bd05db4c6be3079f.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-5178c671~fc70bd05db4c6be3079f.js
+https://a.poki-cdn.com/assets/client~vendors-baaf2ba8~26bc5b6719ec9c183285.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-baaf2ba8~26bc5b6719ec9c183285.js
+https://a.poki-cdn.com/assets/client~vendors-0b1fb840~ed69da22ef2c0f5c979d.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-0b1fb840~ed69da22ef2c0f5c979d.js
+https://a.poki-cdn.com/assets/client~vendors-148698f8~8d8aef6901a612f166bd.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-148698f8~8d8aef6901a612f166bd.js
+https://a.poki-cdn.com/assets/client~vendors-46a1a5fe~b28e581875786edce8de.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-46a1a5fe~b28e581875786edce8de.js
+https://a.poki-cdn.com/assets/client~vendors-343e46a0~4f773ccf87ddd3d01a43.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-343e46a0~4f773ccf87ddd3d01a43.js
+https://a.poki-cdn.com/assets/client~vendors-bc0ce29f~9b95d96be8c2db5ab4f1.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-bc0ce29f~9b95d96be8c2db5ab4f1.js
+https://a.poki-cdn.com/assets/client~vendors-a515f33f~198a397f50a892518a50.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-a515f33f~198a397f50a892518a50.js
+https://a.poki-cdn.com/assets/client~vendors-229eafb5~204435b5d885eca84305.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-229eafb5~204435b5d885eca84305.js
+https://a.poki-cdn.com/assets/client~vendors-c9b35b07~8891f29851ea17589b87.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendors-c9b35b07~8891f29851ea17589b87.js
+https://a.poki-cdn.com/assets/client~main-e96e9bea~d731fa38e4b3f5946f18.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-e96e9bea~d731fa38e4b3f5946f18.js
+https://a.poki-cdn.com/assets/client~main-046e8326~0d32d4a2377bcdb2fc96.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-046e8326~0d32d4a2377bcdb2fc96.js
+https://a.poki-cdn.com/assets/client~main-a4fc0d9e~92800137da3adde270dc.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-a4fc0d9e~92800137da3adde270dc.js
+https://a.poki-cdn.com/assets/client~main-423f78fa~69260880997d5c5a3d7a.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-423f78fa~69260880997d5c5a3d7a.js
+https://a.poki-cdn.com/assets/client~main-d6657317~e61e0d4ed44aafd43ec5.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-d6657317~e61e0d4ed44aafd43ec5.js
+https://a.poki-cdn.com/assets/client~main-5a4af39f~96bd2b20b9f24a3c19ba.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-5a4af39f~96bd2b20b9f24a3c19ba.js
+https://a.poki-cdn.com/assets/client~main-096186f5~f2d53dff069f89240b2f.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-096186f5~f2d53dff069f89240b2f.js
+https://a.poki-cdn.com/assets/client~main-5958331f~61ac978852b42b0ff84a.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-5958331f~61ac978852b42b0ff84a.js
+https://a.poki-cdn.com/assets/client~main-e9d155aa~0dd5f19a3d56fcf57c10.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-e9d155aa~0dd5f19a3d56fcf57c10.js
+https://a.poki-cdn.com/assets/client~main-3e9ad0db~6257a35b0ab97c355d04.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-3e9ad0db~6257a35b0ab97c355d04.js
+https://a.poki-cdn.com/assets/client~main-668fa7ff~1089b41cbda9dcb5c61d.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-668fa7ff~1089b41cbda9dcb5c61d.js
+https://a.poki-cdn.com/assets/client~main-85c77674~1fb58c1552d34012fc7e.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~main-85c77674~1fb58c1552d34012fc7e.js
+https://a.poki-cdn.com/assets/client~3107~34de1f685d80f6aa62eb.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~3107~34de1f685d80f6aa62eb.js
+https://a.poki-cdn.com/assets/client~app-components-Pill~1ddd3b752604127fa5cd.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-Pill~1ddd3b752604127fa5cd.js
+https://a.poki-cdn.com/assets/client~app-components-Logo~460a83a63eecdb0bf0c9.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-Logo~460a83a63eecdb0bf0c9.js
+https://a.poki-cdn.com/assets/client~app-components-NavButtons~58445a76a741738a7308.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-NavButtons~58445a76a741738a7308.js
+https://a.poki-cdn.com/assets/client~app-components-NavButtonProfile~4345376da1dc60d192a1.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-NavButtonProfile~4345376da1dc60d192a1.js
+https://a.poki-cdn.com/assets/client~app-components-TooltipConsumer~270e2559054d1c4ee88b.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-TooltipConsumer~270e2559054d1c4ee88b.js
+https://a.poki-cdn.com/assets/client~app-components-PageGame-63393a95~f9bff53cb46eb18cc505.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-PageGame-63393a95~f9bff53cb46eb18cc505.js
+https://a.poki-cdn.com/assets/client~app-components-PageGame-e019dbda~3f108018fd1f786f86ca.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-PageGame-e019dbda~3f108018fd1f786f86ca.js
+https://a.poki-cdn.com/assets/client~5835~18d945fa55177078cd22.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~5835~18d945fa55177078cd22.js
+https://a.poki-cdn.com/assets/client~app-components-modals-ModalStack-tsx~ebc2423e84a511906dca.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-modals-ModalStack-tsx~ebc2423e84a511906dca.js
+https://a.poki-cdn.com/assets/client~app-components-GameContentTile~1595e581bcfb5961a451.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-GameContentTile~1595e581bcfb5961a451.js
+https://a.poki-cdn.com/assets/client~app-components-Voting~0a283878b9bff3002a2d.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-Voting~0a283878b9bff3002a2d.js
+https://a.poki-cdn.com/assets/client~app-components-GameBarButton~dfe99230a7ff89794fac.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-GameBarButton~dfe99230a7ff89794fac.js
+https://a.poki-cdn.com/assets/client~app-components-ReportBugButton~29ec93ab64504a9fd2a4.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-ReportBugButton~29ec93ab64504a9fd2a4.js
+https://a.poki-cdn.com/assets/client~app-components-FullscreenButton~3e814b88a541e3db096f.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-FullscreenButton~3e814b88a541e3db096f.js
+https://a.poki-cdn.com/assets/client~4368~b2cee407d5acc2d11a6a.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~4368~b2cee407d5acc2d11a6a.js
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://a.poki-cdn.com/assets/client~app-components-NavigationAwareLazyHydrate~9d7a404aa001d492ca2e.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-NavigationAwareLazyHydrate~9d7a404aa001d492ca2e.js
+https://a.poki-cdn.com/assets/client~app-components-CategoryTile~0e513198578912c85ca0.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-CategoryTile~0e513198578912c85ca0.js
+https://a.poki-cdn.com/assets/client~app-components-Description~c2568dc9e13230431357.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-Description~c2568dc9e13230431357.js
+https://a.poki-cdn.com/assets/client~app-components-Breadcrumbs~e5114a5f20eebd1aaef7.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-Breadcrumbs~e5114a5f20eebd1aaef7.js
+https://a.poki-cdn.com/assets/client~app-components-Tags~38046cdd0262984058f8.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-Tags~38046cdd0262984058f8.js
+https://a.poki-cdn.com/assets/client~app-components-Footer~8c9d602b7a2578e3838d.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-Footer~8c9d602b7a2578e3838d.js
+https://a.poki-cdn.com/assets/client~app-components-SocialLinks~e009ac879b6de2c6dd8e.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-SocialLinks~e009ac879b6de2c6dd8e.js
+https://game-cdn.poki.com/scripts/v2/poki-sdk.js
+  dir=mirror/6/game-cdn.poki.com/scripts/v2
+  out=poki-sdk.js
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://a.poki-cdn.com/assets/client~vendor-ory-6caadb54~3d6fad585d8d401ccbfb.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendor-ory-6caadb54~3d6fad585d8d401ccbfb.js
+https://a.poki-cdn.com/assets/client~vendor-ory-0eae3874~a4246fbc00bcc6dc3488.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~vendor-ory-0eae3874~a4246fbc00bcc6dc3488.js
+https://a.poki-cdn.com/assets/client~app-components-SiteSelector~9829694d25b410bb0561.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-SiteSelector~9829694d25b410bb0561.js
+https://poki-auth.poki.com/sessions/whoami
+  dir=mirror/6/poki-auth.poki.com/sessions
+  out=whoami
+https://a.poki-cdn.com/assets/client~app-components-RoundedButton~7ab92c0490db1c872adc.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-RoundedButton~7ab92c0490db1c872adc.js
+https://a.poki-cdn.com/assets/client~app-components-Flag~4ca3c80baa1b94b306f1.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~app-components-Flag~4ca3c80baa1b94b306f1.js
+https://a.poki-cdn.com/flags/denmark.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=denmark.svg
+https://a.poki-cdn.com/flags/germany.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=germany.svg
+https://a.poki-cdn.com/flags/usa.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=usa.svg
+https://a.poki-cdn.com/flags/spain.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=spain.svg
+https://a.poki-cdn.com/flags/france.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=france.svg
+https://a.poki-cdn.com/flags/italy.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=italy.svg
+https://a.poki-cdn.com/flags/hungary.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=hungary.svg
+https://a.poki-cdn.com/flags/netherlands.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=netherlands.svg
+https://a.poki-cdn.com/flags/norway.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=norway.svg
+https://a.poki-cdn.com/flags/uzbekistan.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=uzbekistan.svg
+https://a.poki-cdn.com/flags/poland.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=poland.svg
+https://a.poki-cdn.com/flags/brazil.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=brazil.svg
+https://a.poki-cdn.com/flags/russia.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=russia.svg
+https://a.poki-cdn.com/flags/romania.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=romania.svg
+https://a.poki-cdn.com/flags/slovakia.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=slovakia.svg
+https://a.poki-cdn.com/flags/serbia.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=serbia.svg
+https://a.poki-cdn.com/flags/finland.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=finland.svg
+https://a.poki-cdn.com/flags/sweden.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=sweden.svg
+https://a.poki-cdn.com/flags/philippines.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=philippines.svg
+https://a.poki-cdn.com/flags/turkey.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=turkey.svg
+https://a.poki-cdn.com/flags/greece.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=greece.svg
+https://a.poki-cdn.com/flags/bulgaria.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=bulgaria.svg
+https://a.poki-cdn.com/flags/ukraine.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=ukraine.svg
+https://a.poki-cdn.com/flags/israel.svg
+  dir=mirror/6/a.poki-cdn.com/flags
+  out=israel.svg
+https://game-cdn.poki.com/scripts/a928f2d691f9bede0daa026f643f83ce93bdf3fe/poki-sdk-playground-a928f2d691f9bede0daa026f643f83ce93bdf3fe.js
+  dir=mirror/6/game-cdn.poki.com/scripts/a928f2d691f9bede0daa026f643f83ce93bdf3fe
+  out=poki-sdk-playground-a928f2d691f9bede0daa026f643f83ce93bdf3fe.js
+https://api.poki.com/ads/settings
+  dir=mirror/6/api.poki.com/ads
+  out=settings
+https://imasdk.googleapis.com/js/sdkloader/ima3.js
+  dir=mirror/6/imasdk.googleapis.com/js/sdkloader
+  out=ima3.js
+https://a.poki-cdn.com/assets/client~5677~99cc41cabdfd5944bf04.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~5677~99cc41cabdfd5944bf04.js
+https://a.poki-cdn.com/assets/client~9220~f4792040ad1c3da5c03c.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~9220~f4792040ad1c3da5c03c.js
+https://a.poki-cdn.com/assets/client~7700~b2c568e0c0fe3a0a5d4a.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~7700~b2c568e0c0fe3a0a5d4a.js
+https://a.poki-cdn.com/assets/client~7016~17bc5c12c4490f3f8fa9.css
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~7016~17bc5c12c4490f3f8fa9.css
+https://a.poki-cdn.com/assets/client~7016~1ed1213b11269f863438.js
+  dir=mirror/6/a.poki-cdn.com/assets
+  out=client~7016~1ed1213b11269f863438.js
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://games.poki.com/458768/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6?tag=pg-8f566f2e3159c879158e294b4016dce5e9f61187&site_id=66&iso_lang=pl&country=GB&poki_url=https://poki.com/pl/g/ping-pong-go&gdid=TE9V&hoist=yes&nonPersonalized=y&cloudsavegames=n&familyFriendly=y&categories=2,9,37,93,96,251,775,1126,1139,1140,1143,1147,1190,1193,1201&ab=a928f2d691f9bede0daa026f643f83ce93bdf3fe&experiment=control-c2922ed3&special_condition=landing&csp=1&user_id=ae-0X5bgxeVgTlGOG5agfw
+  dir=mirror/6/games.poki.com/458768
+  out=6caab5cb-54d2-4c8f-aefe-0b0847f7cec6
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/index.html?country=GB&ccpaApplies=0&url_referrer=https%3A%2F%2Fpoki.com%2F&tag=pg-8f566f2e3159c879158e294b4016dce5e9f61187&site_id=66&iso_lang=pl&poki_url=https%3A%2F%2Fpoki.com%2Fpl%2Fg%2Fping-pong-go&gdid=TE9V&hoist=yes&nonPersonalized=y&cloudsavegames=n&familyFriendly=y&categories=2%2C9%2C37%2C93%2C96%2C251%2C775%2C1126%2C1139%2C1140%2C1143%2C1147%2C1190%2C1193%2C1201&ab=a928f2d691f9bede0daa026f643f83ce93bdf3fe&experiment=control-c2922ed3&special_condition=landing&csp=2&game_id=6caab5cb-54d2-4c8f-aefe-0b0847f7cec6&game_version_id=fd2b713f-fda7-4de7-bd92-9ac98f0f9e69&inspector=0
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69
+  out=index.html
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://game-cdn.poki.com/scripts/v2/poki-sdk.js
+  dir=mirror/6/game-cdn.poki.com/scripts/v2
+  out=poki-sdk.js
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/netlib.js
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69
+  out=netlib.js
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/seedRandom.js
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69
+  out=seedRandom.js
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/gsap.min.js
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69
+  out=gsap.min.js
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/Howler.min.js
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69
+  out=Howler.min.js
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/VisibilityManager.js
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69
+  out=VisibilityManager.js
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/app.js
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69
+  out=app.js
+https://game-cdn.poki.com/scripts/a928f2d691f9bede0daa026f643f83ce93bdf3fe/poki-sdk-hoist-a928f2d691f9bede0daa026f643f83ce93bdf3fe.js
+  dir=mirror/6/game-cdn.poki.com/scripts/a928f2d691f9bede0daa026f643f83ce93bdf3fe
+  out=poki-sdk-hoist-a928f2d691f9bede0daa026f643f83ce93bdf3fe.js
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/fonts/LuckiestGuy-Regular.ttf
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/fonts
+  out=LuckiestGuy-Regular.ttf
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/fonts/BenchNine-Regular.ttf
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/fonts
+  out=BenchNine-Regular.ttf
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/audio/sound.mp3
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/audio
+  out=sound.mp3
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/audio/music.mp3
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/audio
+  out=music.mp3
+https://t.poki.io/game-event
+  dir=mirror/6/t.poki.io
+  out=game-event
+https://devs-api.poki.com/gameinfo/@sdk?href=https%3A%2F%2F6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com%2Ffd2b713f-fda7-4de7-bd92-9ac98f0f9e69%2Findex.html%3Fcountry%3DGB%26ccpaApplies%3D0%26url_referrer%3Dhttps%253A%252F%252Fpoki.com%252F%26tag%3Dpg-8f566f2e3159c879158e294b4016dce5e9f61187%26site_id%3D66%26iso_lang%3Dpl%26poki_url%3Dhttps%253A%252F%252Fpoki.com%252Fpl%252Fg%252Fping-pong-go%26gdid%3DTE9V%26hoist%3Dyes%26nonPersonalized%3Dy%26cloudsavegames%3Dn%26familyFriendly%3Dy%26categories%3D2%252C9%252C37%252C93%252C96%252C251%252C775%252C1126%252C1139%252C1140%252C1143%252C1147%252C1190%252C1193%252C1201%26ab%3Da928f2d691f9bede0daa026f643f83ce93bdf3fe%26experiment%3Dcontrol-c2922ed3%26special_condition%3Dlanding%26csp%3D2%26game_id%3D6caab5cb-54d2-4c8f-aefe-0b0847f7cec6%26game_version_id%3Dfd2b713f-fda7-4de7-bd92-9ac98f0f9e69%26inspector%3D0&referrer=https%3A%2F%2Fgames.poki.com%2F
+  dir=mirror/6/devs-api.poki.com/gameinfo
+  out=@sdk
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/images/uiButs.png
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/images
+  out=uiButs.png
+https://6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/json/text.json
+  dir=mirror/6/6caab5cb-54d2-4c8f-aefe-0b0847f7cec6.gdn.poki.com/fd2b713f-fda7-4de7-bd92-9ac98f0f9e69/json
+  out=text.json
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/game-event
+  dir=mirror/6/t.poki.io
+  out=game-event
+https://t.poki.io/game-cookies
+  dir=mirror/6/t.poki.io
+  out=game-cookies
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/game-event
+  dir=mirror/6/t.poki.io
+  out=game-event
+https://api.poki.com/ads/settings
+  dir=mirror/6/api.poki.com/ads
+  out=settings
+https://securepubads.g.doubleclick.net/tag/js/gpt.js
+  dir=mirror/6/securepubads.g.doubleclick.net/tag/js
+  out=gpt.js
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://s0.2mdn.net/instream/video/client.js
+  dir=mirror/6/s0.2mdn.net/instream/video
+  out=client.js
+https://pagead2.googlesyndication.com/omsdk/releases/live/omweb-v1.js
+  dir=mirror/6/pagead2.googlesyndication.com/omsdk/releases/live
+  out=omweb-v1.js
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/game-event
+  dir=mirror/6/t.poki.io
+  out=game-event
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t
+https://t.poki.io/t
+  dir=mirror/6/t.poki.io
+  out=t

@@ -1,0 +1,8 @@
+[suz@katarzynka template-ppg]$ frankenphp php-server -l 0.0.0.0:8123 -r "$PWD" > logs/server.log 2>&1 &
+echo $! > .server.pid
+ss -ltnp | grep -E ':8123|:8124'
+[1] 214393
+LISTEN 0      511          0.0.0.0:8124      0.0.0.0:*    users:(("node-MainThread",pid=213345,fd=21))
+[suz@katarzynka template-ppg]$ IP="$(./get-lan-ip.sh)"
+brave --user-data-dir="$PWD/.browser-profile" "http://$IP:8123/index.html"
+Opening in existing browser session.

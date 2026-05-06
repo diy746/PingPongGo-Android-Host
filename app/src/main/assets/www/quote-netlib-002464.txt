@@ -1,0 +1,401 @@
+,t={
+oImgData:assetLib.getData("uiButs"),aPos:[100,90],align:[.5,.5],id:oImageIds.quitBut,idOver:oImageIds.quitButOver}
+;
+userInput.addHitArea("yesFromResetConfirm",butEventHandler,null,"image",e),userInput.addHitArea("noFromResetConfirm",butEventHandler,null,"image",t);
+var a=[e,t];
+addMuteBut(a),(panel=new Elements.Panel(gameState,a)).startTween(),previousTime=new Date().getTime(),updateResetConfirmEvent()}
+
+function updateSettingsButs(){
+userInput.removeHitArea("minusGames"),userInput.removeHitArea("plusGames"),panel.removeBut(oImageIds.minusBut),panel.removeBut(oImageIds.plusBut),userInput.removeHitArea("minusSets"),userInput.removeHitArea("plusSets");
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[-100,54],align:[.5,.3],id:oImageIds.minusBut,idOver:oImageIds.minusButOver}
+,t={
+oImgData:assetLib.getData("uiButs"),aPos:[100,54],align:[.5,.3],id:oImageIds.plusBut,idOver:oImageIds.plusButOver}
+;
+userInput.addHitArea("minusGames",butEventHandler,null,"image",e),userInput.addHitArea("plusGames",butEventHandler,null,"image",t),panel.aButs.push(e,t);
+var a={
+oImgData:assetLib.getData("uiButs"),aPos:[-100,224],align:[.5,.3],id:oImageIds.minusBut,idOver:oImageIds.minusButOver}
+,s={
+oImgData:assetLib.getData("uiButs"),aPos:[100,224],align:[.5,.3],id:oImageIds.plusBut,idOver:oImageIds.plusButOver}
+;
+userInput.addHitArea("minusSets",butEventHandler,null,"image",a),userInput.addHitArea("plusSets",butEventHandler,null,"image",s),panel.aButs.push(a,s)}
+
+function initStartScreen(e){
+void 0===e&&(e=!0),"game"==gameState?e=!1:gameState="game",gameVariation=0,gameplayState=0,curLevel=saveDataHandler.getLevel(),1==audioType&&music.fade(music.volume(),maxMusicVol,500),background=new Elements.Background;
+var t=[];
+aEffects=[],addMuteBut(t),(panel=new Elements.Panel(gameState,t)).startTween(),updateStartScreenButs(),resetGameElements(),aEffects=[],1!=saveDataHandler.getAudioState()||muted||butEventHandler("mute",null),e&&(previousTime=new Date().getTime(),updateGameEvent())}
+
+function removeStartButs(){
+userInput.removeHitArea("startTouch"),userInput.removeHitArea("infoFromStart"),userInput.removeHitArea("awardsFromStart"),userInput.removeHitArea("batShopFromStart"),userInput.removeHitArea("customMatchFromStart"),userInput.removeHitArea("challengeFromStart"),userInput.removeHitArea("bugGameFromStart"),userInput.removeHitArea("careerFromStart"),userInput.removeHitArea("pvpFromStart"),panel.removeBut(oImageIds.bugGameBut),panel.removeBut(oImageIds.infoBut),panel.removeBut(oImageIds.batShopBut),panel.removeBut(oImageIds.awardsBut),panel.removeBut(oImageIds.challengeBut),panel.removeBut(oImageIds.classicGameBut),panel.removeBut(oImageIds.careerBut),panel.removeBut(oImageIds.pvpGameBut)}
+
+function updateStartScreenButs(){
+removeStartButs(),batShopButDown=!1;
+var e,t,a,s,i,r,o={
+oImgData:assetLib.getData("uiButs"),aPos:[-140,50],align:[1,0],id:oImageIds.infoBut,idOver:oImageIds.infoButOver}
+;
+userInput.addHitArea("infoFromStart",butEventHandler,null,"image",o),panel.aButs.push(o),canvas.width/canvas.height<.6?(saveDataHandler.getLevel()>0?(e={
+oImgData:assetLib.getData("uiButs"),aPos:[160,-250],align:[.5,1],id:oImageIds.awardsBut,idOver:oImageIds.awardsButOver}
+,t={
+oImgData:assetLib.getData("uiButs"),aPos:[320,-250],align:[.5,1],id:oImageIds.batShopBut,idOver:oImageIds.batShopButOver}
+,a={
+oImgData:assetLib.getData("uiButs"),aPos:[-160,-250],align:[.5,1],id:oImageIds.challengeBut,idOver:oImageIds.challengeButOver}
+,i={
+oImgData:assetLib.getData("uiButs"),aPos:[0,-250],align:[.5,1],id:oImageIds.careerBut,idOver:oImageIds.careerButOver}
+,s={
+oImgData:assetLib.getData("uiButs"),aPos:[-320,-250],align:[.5,1],id:oImageIds.bugGameBut,idOver:oImageIds.bugGameButOver}
+,r={
+oImgData:assetLib.getData("uiButs"),aPos:[320,-430],align:[.5,1],id:oImageIds.pvpGameBut,idOver:oImageIds.pvpGameButOver,flash:!0}
+):r={
+oImgData:assetLib.getData("uiButs"),aPos:[320,-250],align:[.5,1],id:oImageIds.pvpGameBut,idOver:oImageIds.pvpGameButOver,flash:!0}
+,userInput.addHitArea("startTouch",butEventHandler,null,"rect",{
+aRect:[250,300,canvas.width-250,canvas.height-350]}
+,!0)):(saveDataHandler.getLevel()>0?(e={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-390],align:[1,1],id:oImageIds.awardsBut,idOver:oImageIds.awardsButOver}
+,t={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-210],align:[1,1],id:oImageIds.batShopBut,idOver:oImageIds.batShopButOver}
+,a={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-390],align:[0,1],id:oImageIds.challengeBut,idOver:oImageIds.challengeButOver}
+,i={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-210],align:[0,1],id:oImageIds.careerBut,idOver:oImageIds.careerButOver}
+,s={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-570],align:[0,1],id:oImageIds.bugGameBut,idOver:oImageIds.bugGameButOver}
+,r={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-570],align:[1,1],id:oImageIds.pvpGameBut,idOver:oImageIds.pvpGameButOver,flash:!0}
+):r={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-210],align:[1,1],id:oImageIds.pvpGameBut,idOver:oImageIds.pvpGameButOver,flash:!0}
+,userInput.addHitArea("startTouch",butEventHandler,null,"rect",{
+aRect:[250,300,canvas.width-250,canvas.height-100]}
+,!0)),saveDataHandler.getLevel()>0?(userInput.addHitArea("awardsFromStart",butEventHandler,null,"image",e),userInput.addHitArea("batShopFromStart",butEventHandler,{
+multiTouch:!0}
+,"image",t),userInput.addHitArea("challengeFromStart",butEventHandler,null,"image",a),userInput.addHitArea("careerFromStart",butEventHandler,null,"image",i),userInput.addHitArea("bugGameFromStart",butEventHandler,null,"image",s),userInput.addHitArea("pvpFromStart",butEventHandler,null,"image",r),panel.aButs.push(t,a,e,s,i,r)):(userInput.addHitArea("pvpFromStart",butEventHandler,null,"image",r),panel.aButs.push(r))}
+
+function resetGameElements(){
+if(tableTop=new Elements.TableTop,userBat=new Elements.UserBat,4==gameVariation?(enemyBat=new Elements.NetworkBat,pvpGameTime=0):enemyBat=new Elements.EnemyBat,4==gameVariation&&1==netLib.playerNum){
+aBalls=[];
+var e=new Elements.Ball("enemy");
+aBalls.push(e)}
+else{
+aBalls=[];
+var e=new Elements.Ball;
+aBalls.push(e)}
+background.setRandom(),tableTop.setTableCol()}
+
+function updateBatShopData(){
+resetBatShopData();
+for(var e=0;
+e<aBatData.length;
+e++)saveDataHandler.getBatUnlockState(e)>0&&(aBatData[e].unlockId=0)}
+
+function initBatShop(){
+gameState="batShop",updateBatShopData(),butDown=!1;
+var e=[];
+aEffects=[],addMuteBut(e),batShop=new Elements.BatShop,panel=new Elements.Panel(gameState,e),initBatShopButs(),panel.startTween(),aEffects=[],previousTime=new Date().getTime(),updateBatShopEvent()}
+
+function initMapScreen(){
+gameState="mapScreen";
+var e=[];
+aEffects=[],addMuteBut(e),aSeasonFlags=getSeasonFlags(saveDataHandler.getSeason()),saveDataHandler.getSeason(),saveDataHandler.getRound(),opBat=getEnemyBat(),aSeasonFlagsRender=[];
+for(var t=0;
+t<aSeasonFlags.length;
+t++)aSeasonFlagsRender.push({
+aSeasonFlagsIndex:t,y:aFlags[aSeasonFlags[t].id].y}
+);
+aSeasonFlagsRender=sortBy(aSeasonFlagsRender,"y"),(panel=new Elements.Panel(gameState,e)).startTween(),panel.mapIntro(),aEffects=[],previousTime=new Date().getTime(),updateMapScreenEvent()}
+
+function addMapButs(){
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[0,50],align:[.5,.7],id:oImageIds.playBut,idOver:oImageIds.playButOver,flash:!0}
+;
+userInput.addHitArea("playFromMapScreen",butEventHandler,null,"image",e),panel.aButs.push(e);
+var t={
+oImgData:assetLib.getData("uiButs"),aPos:[50,-50],align:[0,1],id:oImageIds.backBut,idOver:oImageIds.backButOver}
+;
+userInput.addHitArea("backFromMapScreen",butEventHandler,null,"image",t),panel.aButs.push(t)}
+
+function initBatShopButs(){
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[50,-50],align:[0,1],id:oImageIds.backBut,idOver:oImageIds.backButOver}
+;
+userInput.addHitArea("backFromBatShop",butEventHandler,null,"image",e),panel.aButs.push(e),userInput.addHitArea("batShopTouch",butEventHandler,{
+isDraggable:!0,multiTouch:!0}
+,"rect",{
+aRect:[0,0,canvas.width,canvas.height]}
+,!0)}
+
+function getEnemyBat(){
+if(0==curLevel||firstRun)return firstRun=!1,1;
+for(var e=Math.floor(Math.random()*aBatData.length);
+0!=aBatData[e].unlockWorld||e==curBat;
+)e=Math.floor(Math.random()*aBatData.length);
+return e}
+
+function showAd(e){
+window.PokiSDK.commercialBreak(function(){
+muted||(Howler.mute(!0),music.pause()),userInput.pointerLockOff()}
+).then(function(){
+console.log("Commercial break finished, proceeding to game"),userInput.pointerLockOn(),muted||(Howler.mute(!1),playMusic()),e()}
+)}
+
+function showRewardAd(e,t){
+void 0===t&&(t=null),window.PokiSDK.rewardedBreak(function(){
+muted||(Howler.mute(!0),music.pause()),userInput.pointerLockOff()}
+).then(function(a){
+userInput.pointerLockOn(),muted||(Howler.mute(!1),playMusic()),rewardAdSuccess(e,a,t),console.log("Rewarded break finished, proceeding to game")}
+)}
+
+function rewardAdSuccess(e,t,a){
+switch(void 0===a&&(a=null),e){
+
+case"customGameEnd":t&&addRewardGems(rewardGemTotal),initCustomGameEndButs();
+break;
+
+case"levelComplete":t&&addRewardGems(rewardGemTotal),initLevelCompleteButs();
+break;
+
+case"targetGameEnd":t&&addRewardGems(rewardGemTotal),initTargetGameEndButs();
+break;
+
+case"bugGameEnd":t&&addRewardGems(rewardGemTotal),initBugGameEndButs();
+break;
+
+case"batUnlock":userInput.removeHitArea("backFromBatShop"),userInput.removeHitArea("batShopTouch"),panel.removeBut(oImageIds.backBut),t&&(playSound("unlockBat",.5),saveDataHandler.unlockBat(a),saveDataHandler.selectBat(a),curBat=saveDataHandler.getCurBat(),updateBatShopData(),awardPanel.checkForAward(curLevel),batShop.batUnlocked()),initBatShopButs()}
+}
+
+function initPvpGame(){
+gameState="network";
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[50,-50],align:[0,1],id:oImageIds.backBut,idOver:oImageIds.backButOver}
+;
+userInput.addHitArea("backFromNetwork",butEventHandler,null,"image",e);
+var t=Array(e);
+addMuteBut(t),(panel=new Elements.Panel(gameState,t)).startTween(),netLib.connect("createLobby"),previousTime=new Date().getTime(),resizeCanvas(),updateNetworkScreenEvent()}
+
+function addUrlBut(){
+panel.linkTextId=0,panel.shareButOn=!0,userInput.addHitArea("urlAreaFromNetwork",butEventHandler,null,"rect",{
+aRect:[200,200,canvas.width-200,canvas.height-200]}
+,!0);
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[0,230],align:[.5,.5],id:oImageIds.shareBut,idOver:oImageIds.shareButOver,flash:!0}
+;
+userInput.addHitArea("urlFromNetwork",butEventHandler,null,"image",e),panel.aButs.push(e)}
+
+function initGame(){
+window.PokiSDK.gameplayStart(),1==audioType&&setTimeout(function(){
+music.fade(music.volume(),minMusicVol,500)}
+,500),levelStarTarg=2+Math.min(Math.floor((curLevel=saveDataHandler.getLevel())/levelsPerWorld),3),curLevelStars=0,1==gameVariation?localTargetHighscore=saveDataHandler.getBestTargetScore():3==gameVariation&&(localTargetHighscore=saveDataHandler.getBestBugScore()),rewardButHit=!1,isMobile&&userInput.addHitArea("gameTouch",butEventHandler,{
+isDraggable:!0,multiTouch:!0}
+,"rect",{
+aRect:[0,100,canvas.width,canvas.height]}
+,!0);
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[-140,50],align:[1,0],id:oImageIds.pauseBut,idOver:oImageIds.pauseButOver}
+;
+if(userInput.addHitArea("pause",butEventHandler,null,"image",e),panel.aButs.push(e),panel.startGameTween(),gameplayState=1,resetGameElements(),1==gameVariation){
+playSound("gameStart1",.6),curTargetScore=0,tableTop.setTarget(),userBat.x=userBat.prevX=userBat.startX=canvas.width/2,userBat.y=userBat.prevY=userBat.startY=onScreenY+355,userBat.rotation=userBat.startRotation=0,aBalls=[];
+var t=new Elements.Ball("enemy");
+aBalls.push(t),setTimeout(function(){
+aBalls[0].enemyServe()}
+,1e3),tableTop.startBot()}
+else if(3==gameVariation)bugScore=0,bugTime=0,bugWaveKilled=0,bugWave=0,playSound("gameStart1",.6),curTargetScore=0,tableTop.setZombieStart();
+else if(4==gameVariation){
+if(playSound("gameStart0"),1==netLib.playerNum){
+aBalls=[];
+var t=new Elements.Ball("enemy");
+aBalls.push(t)}
+}
+else playSound("gameStart0");
+4!=gameVariation&&setTimeout(function(){
+userInput.addKey("keyPauseOn",butEventHandler,null,80),userInput.addKey("keyPauseOn",butEventHandler,null,27),userInput.addKey("keyPauseOn",butEventHandler,null,32)}
+,500),userScore=enemyScore=userSets=enemySets=0}
+
+function initPause(){
+gameState="pause",window.PokiSDK.gameplayStop();
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[0,-110],align:[.5,.5],id:oImageIds.continueBut,idOver:oImageIds.continueButOver}
+,t={
+oImgData:assetLib.getData("uiButs"),aPos:[0,110],align:[.5,.5],id:oImageIds.quitBut,idOver:oImageIds.quitButOver}
+;
+userInput.addHitArea("continueFromPause",butEventHandler,null,"image",e),userInput.addHitArea("quitFromPause",butEventHandler,{
+isDraggable:!0,multiTouch:!0}
+,"image",t),setTimeout(function(){
+userInput.addKey("keyPauseOff",butEventHandler,null,80),userInput.addKey("keyPauseOff",butEventHandler,null,27),userInput.addKey("keyPauseOff",butEventHandler,null,32)}
+,500),(panel=new Elements.Panel(gameState,[e,t])).startTween(),previousTime=new Date().getTime(),updatePauseEvent()}
+
+function resumeGame(){
+window.PokiSDK.gameplayStart(),background=new Elements.Background,isMobile&&userInput.addHitArea("gameTouch",butEventHandler,{
+isDraggable:!0,multiTouch:!0}
+,"rect",{
+aRect:[0,100,canvas.width,canvas.height]}
+,!0);
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[-140,50],align:[1,0],id:oImageIds.pauseBut,idOver:oImageIds.pauseButOver}
+;
+userInput.addHitArea("pause",butEventHandler,null,"image",e);
+var t=Array(e);
+setTimeout(function(){
+userInput.addKey("keyPauseOn",butEventHandler,null,80),userInput.addKey("keyPauseOn",butEventHandler,null,27),userInput.addKey("keyPauseOn",butEventHandler,null,32)}
+,500),addMuteBut(t),(panel=new Elements.Panel(gameState,t)).startTween(),"game"!=gameState&&(gameState="game",previousTime=new Date().getTime(),updateGameEvent())}
+
+function initTargetGameEnd(){
+if(window.PokiSDK.gameplayStop(),1==audioType&&music.fade(music.volume(),maxMusicVol,500),userInput.removeHitArea("gameTouch"),userInput.removeHitArea("pause"),panel.removeBut(oImageIds.pauseBut),userInput.removeKey("keyPauseOn"),gameplayState=7,saveDataHandler.setBestTargetScore(curTargetScore),Math.round(curTargetScore/2)>0?saveDataHandler.addGems(Math.round(curTargetScore/2)):setTimeout(function(){
+initTargetGameEndButs()}
+,1e3),awardPanel.checkForAward(curLevel),curTargetScore>localTargetHighscore)for(var e=0;
+e<200;
+e++){
+var t=new Elements.Confetti(Math.random()*canvas.width,Math.random()*canvas.height);
+aEffects.push(t)}
+panel.tweenTargetGameComplete()}
+
+function initTargetGameEndButs(){
+panel.startTween(),gameplayState=8,batShopButDown=!1;
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[0,50],align:[.5,.7],id:oImageIds.playBut,idOver:oImageIds.playButOver,flash:!0}
+;
+if(userInput.addHitArea("playFromTargetGameEnd",butEventHandler,null,"image",e),panel.aButs.push(e),Math.round(curTargetScore/2)>0){
+if(!rewardButHit){
+t=canvas.height<1.2*canvas.width?.325:.35;
+var t,a={
+oImgData:assetLib.getData("uiButs"),aPos:[285,0],align:[.5,t],id:oImageIds.rewardMultiplyBut,idOver:oImageIds.rewardMultiplyButOver,flash:!0}
+;
+userInput.addHitArea("rewardFromTargetGameEnd",butEventHandler,null,"image",a),panel.aButs.push(a)}
+}
+else{
+var s={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-390],align:[1,1],id:oImageIds.awardsBut,idOver:oImageIds.awardsButOver}
+;
+userInput.addHitArea("awardsFromTargetGameEnd",butEventHandler,null,"image",s),panel.aButs.push(s)}
+var i={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-210],align:[1,1],id:oImageIds.batShopBut,idOver:oImageIds.batShopButOver}
+;
+userInput.addHitArea("batShopFromTargetGameEnd",butEventHandler,{
+multiTouch:!0}
+,"image",i),panel.aButs.push(i);
+var r={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-390],align:[0,1],id:oImageIds.arcadeBut,idOver:oImageIds.arcadeButOver}
+;
+userInput.addHitArea("arcadeFromTargetGameEnd",butEventHandler,null,"image",r),panel.aButs.push(r);
+var o={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-210],align:[0,1],id:oImageIds.careerBut,idOver:oImageIds.careerButOver}
+;
+userInput.addHitArea("careerFromTargetGameEnd",butEventHandler,null,"image",o),panel.aButs.push(o);
+var n={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-570],align:[0,1],id:oImageIds.bugGameBut,idOver:oImageIds.bugGameButOver}
+;
+userInput.addHitArea("bugGameFromTargetGameEnd",butEventHandler,null,"image",n),panel.aButs.push(n);
+var l={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-390],align:[1,1],id:oImageIds.pvpGameBut,idOver:oImageIds.pvpGameButOver,flash:!0}
+;
+userInput.addHitArea("pvpFromTargetGameEnd",butEventHandler,null,"image",l),panel.aButs.push(l);
+var m={
+oImgData:assetLib.getData("uiButs"),aPos:[50,-50],align:[0,1],id:oImageIds.backBut,idOver:oImageIds.backButOver}
+;
+userInput.addHitArea("backFromTargetGameEnd",butEventHandler,null,"image",m),panel.aButs.push(m)}
+
+function initBugGameEnd(){
+if(window.PokiSDK.gameplayStop(),1==audioType&&music.fade(music.volume(),maxMusicVol,500),playSound("targetGameEnd"),curTargetScore>50&&playSound("cheer"+Math.floor(6*Math.random())),userInput.removeHitArea("gameTouch"),userInput.removeHitArea("pause"),panel.removeBut(oImageIds.pauseBut),userInput.removeKey("keyPauseOn"),gameplayState=11,saveDataHandler.setBestBugScore(bugScore),Math.ceil(bugScore/4)>0?saveDataHandler.addGems(Math.ceil(bugScore/4)):setTimeout(function(){
+initBugGameEndButs()}
+,1e3),awardPanel.checkForAward(curLevel),bugScore>localTargetHighscore)for(var e=0;
+e<200;
+e++){
+var t=new Elements.Confetti(Math.random()*canvas.width,Math.random()*canvas.height);
+aEffects.push(t)}
+panel.tweenBugGameComplete()}
+
+function initBugGameEndButs(){
+panel.startTween(),gameplayState=12,batShopButDown=!1;
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[0,50],align:[.5,.7],id:oImageIds.playBut,idOver:oImageIds.playButOver,flash:!0}
+;
+if(userInput.addHitArea("playFromBugGameEnd",butEventHandler,null,"image",e),panel.aButs.push(e),Math.ceil(bugScore/4)>0&&!rewardButHit){
+t=canvas.height<1.2*canvas.width?.325:.35;
+var t,a={
+oImgData:assetLib.getData("uiButs"),aPos:[285,0],align:[.5,t],id:oImageIds.rewardMultiplyBut,idOver:oImageIds.rewardMultiplyButOver,flash:!0}
+;
+userInput.addHitArea("rewardFromBugGameEnd",butEventHandler,null,"image",a),panel.aButs.push(a)}
+var s={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-210],align:[1,1],id:oImageIds.batShopBut,idOver:oImageIds.batShopButOver}
+;
+userInput.addHitArea("batShopFromBugGameEnd",butEventHandler,{
+multiTouch:!0}
+,"image",s),panel.aButs.push(s);
+var i={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-390],align:[0,1],id:oImageIds.arcadeBut,idOver:oImageIds.arcadeButOver}
+;
+userInput.addHitArea("arcadeFromBugGameEnd",butEventHandler,null,"image",i),panel.aButs.push(i);
+var r={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-210],align:[0,1],id:oImageIds.careerBut,idOver:oImageIds.careerButOver}
+;
+userInput.addHitArea("careerFromBugGameEnd",butEventHandler,null,"image",r),panel.aButs.push(r);
+var o={
+oImgData:assetLib.getData("uiButs"),aPos:[90,-570],align:[0,1],id:oImageIds.challengeBut,idOver:oImageIds.challengeButOver}
+;
+userInput.addHitArea("challengeFromBugGameEnd",butEventHandler,null,"image",o),panel.aButs.push(o);
+var n={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-390],align:[1,1],id:oImageIds.pvpGameBut,idOver:oImageIds.pvpGameButOver,flash:!0}
+;
+userInput.addHitArea("pvpFromBugGameEnd",butEventHandler,null,"image",n),panel.aButs.push(n);
+var l={
+oImgData:assetLib.getData("uiButs"),aPos:[50,-50],align:[0,1],id:oImageIds.backBut,idOver:oImageIds.backButOver}
+;
+userInput.addHitArea("backFromBugGameEnd",butEventHandler,null,"image",l),panel.aButs.push(l)}
+
+function initGameWon(){
+gameplayState=2;
+for(var e=0;
+e<200;
+e++){
+var t=new Elements.Confetti(Math.random()*canvas.width,Math.random()*canvas.height);
+aEffects.push(t)}
+userInput.removeHitArea("gameTouch"),userInput.removeHitArea("pause"),userInput.removeKey("keyPauseOn"),panel.removeBut(oImageIds.pauseBut),userBat.levelComplete(),enemyBat.levelComplete()}
+
+function prepForCareerMatch(){
+gameplayState=1,gameVariation=2,gameState="game",background=new Elements.Background;
+var e=[];
+aEffects=[],addMuteBut(e),(panel=new Elements.Panel(gameState,e)).startTween(),previousTime=new Date().getTime(),updateGameEvent(),initGame()}
+
+function initPvpGameComplete(){
+window.PokiSDK.gameplayStop(),1==audioType&&music.fade(music.volume(),maxMusicVol,500),userScore>enemyScore&&saveDataHandler.addPvpWins(),userInput.removeHitArea("gameTouch"),userInput.removeHitArea("pause"),panel.removeBut(oImageIds.pauseBut),userInput.removeKey("keyPauseOn"),gameplayState=13,firstCareerGame=!1;
+for(var e=0;
+e<200;
+e++){
+var t=new Elements.Confetti(Math.random()*canvas.width,Math.random()*canvas.height);
+aEffects.push(t)}
+panel.tweenPvpGameComplete()}
+
+function initPvpGameEndButs(){
+panel.startTween(),gameplayState=14,batShopButDown=!1;
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[0,50],align:[.5,.7],id:oImageIds.playBut,idOver:oImageIds.playButOver,flash:!0}
+;
+userInput.addHitArea("playFromPvpGameEnd",butEventHandler,null,"image",e),panel.aButs.push(e);
+var t={
+oImgData:assetLib.getData("uiButs"),aPos:[50,-50],align:[0,1],id:oImageIds.backBut,idOver:oImageIds.backButOver}
+;
+userInput.addHitArea("backFromPvpGameEnd",butEventHandler,null,"image",t),panel.aButs.push(t)}
+
+function initCustomGameComplete(){
+window.PokiSDK.gameplayStop(),1==audioType&&music.fade(music.volume(),maxMusicVol,500),userInput.removeHitArea("gameTouch"),userInput.removeHitArea("pause"),panel.removeBut(oImageIds.pauseBut),userInput.removeKey("keyPauseOn"),gameplayState=9,firstCareerGame=!1;
+var e=saveDataHandler.getRank()-aSeasonFlags[saveDataHandler.getRound()].rank;
+saveDataHandler.setRound(saveDataHandler.getRound()+1),saveDataHandler.getRound()>=6&&(saveDataHandler.setSeason(saveDataHandler.getSeason()+1),saveDataHandler.setRound(0)),userSets>enemySets?(saveDataHandler.addGems(50+10*saveDataHandler.getSeason()+saveDataHandler.getRound()),saveDataHandler.addClassicWins(),rankChange=Math.ceil(Math.min(Math.max(e/2,5),25))):(saveDataHandler.addGems(25),rankChange=Math.round(Math.min(Math.max(-e/2,-25),-5))),saveDataHandler.setRank(Math.max(saveDataHandler.getRank()-rankChange,1)),awardPanel.checkForAward(curLevel);
+for(var t=0;
+t<200;
+t++){
+var a=new Elements.Confetti(Math.random()*canvas.width,Math.random()*canvas.height);
+aEffects.push(a)}
+panel.tweenCustomGameComplete()}
+
+function initCustomGameEndButs(){
+panel.startTween(),gameplayState=10,batShopButDown=!1;
+var e={
+oImgData:assetLib.getData("uiButs"),aPos:[0,50],align:[.5,.7],id:oImageIds.playBut,idOver:oImageIds.playButOver,flash:!0}
+;
+if(userInput.addHitArea("playFromCustomGameEnd",butEventHandler,null,"image",e),panel.aButs.push(e),!rewardButHit){
+var t={
+oImgData:assetLib.getData("uiButs"),aPos:[285,0],align:[.5,.4],id:oImageIds.rewardMultiplyBut,idOver:oImageIds.rewardMultiplyButOver,flash:!0}
+;
+userInput.addHitArea("rewardFromCustomGameEnd",butEventHandler,null,"image",t),panel.aButs.push(t)}
+var a={
+oImgData:assetLib.getData("uiButs"),aPos:[-90,-210],align:[1,1],id:oImageIds.batShopBut,idOver:oImageIds.batShopButOver}
+;
+userInput.addHitArea("batShopFromCustomGameEnd",butEventHandler,{
+multiTouch:!0}

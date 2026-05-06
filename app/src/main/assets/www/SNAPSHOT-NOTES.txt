@@ -1,0 +1,16 @@
+PingPongGo offline/LAN snapshot
+
+Working:
+- local HTTP server on 8123
+- local netlib signaling on 8124
+- dynamic LAN IP detection
+- invite link with ?id=CODE
+- QR invite overlay
+- WebRTC multiplayer connected on LAN/hotspot
+
+Run:
+Terminal 1:
+  node signaling-server.js
+
+Terminal 2:
+  ./run-auto.sh

@@ -1,0 +1,401 @@
+ctx.drawImage(this.oGameElementsImgData.img,a,s,i,r,-i/2*(1-Math.abs(Math.sin(this.flipX))),-r/3,i*(1-Math.abs(Math.sin(this.flipX))),r),ctx.restore()}
+ctx.save(),ctx.translate(this.x,this.y-(20-this.celebrateY)*this.scale),ctx.scale(this.scale,this.scale*Math.min(1-(this.y-.5*canvas.height)/(.5*canvas.height)*.3,1)),ctx.rotate(this.rotation);
+var o=curBat,t=0;
+o>=49&&(t=o);
+var a=this.oGameElementsImgData.oData.oAtlasData[oImageIds["batBehind"+t]].x,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds["batBehind"+t]].y,i=this.oGameElementsImgData.oData.oAtlasData[oImageIds["batBehind"+t]].width,r=this.oGameElementsImgData.oData.oAtlasData[oImageIds["batBehind"+t]].height;
+ctx.drawImage(this.oGameElementsImgData.img,a,s,i,r,-i/2*(1-Math.abs(Math.sin(this.flipX))),-r/3,i*(1-Math.abs(Math.sin(this.flipX))),r),ctx.rotate(-this.rotation),ctx.translate(0,Math.min(7*Math.max((this.y-.5*canvas.height)/(.5*canvas.height),0),7)),ctx.rotate(this.rotation);
+var a=this.oGameElementsImgData.oData.oAtlasData[oImageIds["bat"+o]].x,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds["bat"+o]].y,i=this.oGameElementsImgData.oData.oAtlasData[oImageIds["bat"+o]].width,r=this.oGameElementsImgData.oData.oAtlasData[oImageIds["bat"+o]].height;
+ctx.drawImage(this.oGameElementsImgData.img,a,s,i,r,-i/2*(1-Math.abs(Math.sin(this.flipX))),-r/3,i*(1-Math.abs(Math.sin(this.flipX))),r),ctx.restore()}
+,e}
+();
+e.UserBat=t}
+(Elements||(Elements={
+}
+)),
+function(e){
+var t=function(){
+
+function e(){
+this.x=0,this.y=0,this.rotation=0,this.scale=1,this.speedX=3e3,this.maxAcc=500,this.skillLevel=0,this.powerLevel=0,this.spinLevel=0,this.id=0,this.aEases=["Quad.easeInOut","Back.easeOut","Cubic.easeOut","Back.easeInOut"],this.trackBall=!0,this.slideInc=0,this.flailInc=0,this.inc=0,this.incY=0,this.celebrateY=0,this.firstShot=!0,this.scoreDiff=0,this.flipX=1,this.flipY=1,this.swipeOffsetX=0,this.scoreDiffMax=.25,this.oGameElementsImgData=assetLib.getData("gameElements"),this.x=canvas.width/2,this.targX=0,this.targY=0,this.accX=0}
+return e.prototype.setEnemyLevel=function(){
+if(0==gameVariation)this.skillLevel=Math.min(Math.max(.2*Math.random()+Math.min(curLevel/30,.8)+this.scoreDiff,0),1),this.powerLevel=Math.min(Math.max(.2*Math.random()+Math.min(curLevel/20,.8)+this.scoreDiff,0),1),this.spinLevel=Math.min(Math.max(.2*Math.random()+Math.min(curLevel/20,.8)+this.scoreDiff,0),1);
+else if(2==gameVariation){
+var e=(500-Math.min(aSeasonFlags[saveDataHandler.getRound()].rank,500))/500*.6;
+this.skillLevel=Math.min(Math.max(.2+.2*Math.random()+e+this.scoreDiff,0),1),this.powerLevel=Math.min(Math.max(.2+.2*Math.random()+e+this.scoreDiff,0),1),this.spinLevel=Math.min(Math.max(.2+.2*Math.random()+e+this.scoreDiff,0),1)}
+}
+,e.prototype.reset=function(){
+this.celebrateY=0,this.scoreDiff=0}
+,e.prototype.levelComplete=function(){
+this.autotween&&this.autotween.kill(),this.incY=0,this.autotween=TweenLite.to(this,2,{
+rotation:360*radian,incY:180*radian,scale:0,ease:"Quad.easeOut",onComplete:function(){
+}
+}
+)}
+,e.prototype.resetToCentre=function(){
+this.trackBall=!1,this.moveTween&&this.moveTween.kill(),this.targX=this.x-canvas.width/2,this.moveTween=TweenLite.to(this,1,{
+targX:0,targY:0,ease:"Quad.easeInOut",onComplete:function(){
+(0==gameVariation||2==gameVariation)&&"enemy"==aBalls[curBallId].lastHit&&aBalls[curBallId].enemyServe()}
+}
+)}
+,e.prototype.flail=function(){
+var e=this;
+this.flailInc=0;
+var t=1;
+aBalls[curBallId].x<this.x&&(t=-1),TweenLite.to(this,.5,{
+flailInc:t,ease:"Quad.easeInOut",onComplete:function(){
+TweenLite.to(e,.5,{
+flailInc:0,ease:"Quad.easeInOut"}
+)}
+}
+)}
+,e.prototype.setBouncePos=function(e,t,a){
+var s=this;
+if(this.moveTween&&this.moveTween.kill(),(0==a||1*Math.random()<.25)&&1!=aBalls[curBallId].servingState){
+this.trackBall=!1;
+var i=0;
+1*Math.random()>.75+.25*this.skillLevel&&(i=100*Math.random()-50);
+var r=t*t*tableDepth*(1+tableTop.offsetY/2)/2,o=r*(tableTop.offsetX+.6*e)*num128*(1+tableTop.offsetY/2)+e*tableBackWidth/2+100*a;
+this.moveTween=TweenLite.to(this,.6*Math.random()+.5+(1-this.skillLevel)*.75,{
+delay:.2*Math.random(),targX:o+i,targY:r,ease:this.aEases[Math.floor(Math.random()*this.aEases.length)],onComplete:function(){
+"enemy"==aBalls[curBallId].lastHit&&(s.moveTween=TweenLite.to(s,.6*Math.random()+.5+(1-s.skillLevel)*.75,{
+delay:.6*Math.random()*(1+(1-s.skillLevel)*1),targX:200*Math.random()-100,targY:0,ease:"Quad.easeInOut"}
+))}
+}
+)}
+else this.trackBall=!0,this.slideInc=0,this.moveTween=TweenLite.to(this,(.6*Math.random()+.5)*(1+(1-this.skillLevel)*1),{
+targY:0,ease:"Quad.easeInOut"}
+)}
+,e.prototype.successFlip=function(){
+var e=this;
+this.swipeTween&&this.swipeTween.kill(),this.flipX=1,this.swipeTween=TweenLite.to(this,.5,{
+flipX:-1,ease:"Bounce.easeInOut",onComplete:function(){
+e.flipX=1}
+}
+)}
+,e.prototype.hitSwipe=function(){
+var e,t,a=this;
+this.swipeTween&&this.swipeTween.kill(),this.swipeOffsetX=0,Math.random()>.5?(e=.8+.2*Math.random(),t=1):(e=1,t=.8+.2*Math.random()),this.swipeTween=TweenLite.to(this,.1,{
+swipeOffsetX:100*Math.random()-50,flipX:e,flipY:t,ease:"Cubic.easeOut",onComplete:function(){
+a.swipeTween=TweenLite.to(a,.5,{
+swipeOffsetX:0,flipX:1,flipY:1,ease:"Back.easeOut",onComplete:function(){
+}
+}
+)}
+}
+)}
+,e.prototype.update=function(){
+0==gameplayState?(this.inc+=delta,this.y=this.targY+onScreenY+50*tableTop.offsetY-50,this.x=canvas.width/2+50*Math.sin(5*this.inc),this.rotation=.3*Math.sin(5*this.inc),this.scale=.4+(this.y-onScreenY)/300):2==gameplayState?this.celebrateY=-50*Math.sin(this.incY):1==gameplayState&&(this.y=this.targY+onScreenY+50*tableTop.offsetY-50,this.trackBall?(this.slideInc=(aBalls[curBallId].x-this.x)*(15*this.skillLevel+10),this.x+=this.slideInc*delta,"enemy"==aBalls[curBallId].lastHit&&(this.targX=this.x-canvas.width/2,this.moveTween=TweenLite.to(this,(.6*Math.random()+.5)*(1+(1-this.skillLevel)*1),{
+delay:.6*Math.random()*(1+(1-this.skillLevel)*1),targX:200*Math.random()-100,targY:0,ease:"Quad.easeInOut"}
+),this.trackBall=!1)):this.x=this.targX+canvas.width/2,this.rotation=(this.x-canvas.width/2)/200,this.scale=.4+(this.y-onScreenY)/300,this.x=Math.min(Math.max(this.x,canvas.width/2-250),canvas.width/2+250))}
+,e.prototype.getHitData=function(e,t){
+0==aBalls[curBallId].servingState?(this.hitX=2*Math.random()-1,this.hitY=.2*Math.random()+.65):(this.hitX=(1.8*Math.random()-.9)*(1+.25*this.skillLevel),Math.random()>.8+.2*this.skillLevel&&(this.x>canvas.width/2+120||this.x<canvas.width/2-120)&&(this.x>canvas.width/2?this.hitX=1.3:this.hitX=-1.3),this.hitY=.4*Math.random()+.65);
+var a=0;
+this.hitY<.95&&(this.hitX>.1?a=-(.5*Math.random()+.5)*this.spinLevel:this.hitX<-.1&&(a=(.5*Math.random()+.5)*this.spinLevel));
+var s=.3+.3/.4*(this.hitY-.6)*(.25+.9*this.powerLevel);
+return this.hitSwipe(),{
+x:this.hitX,y:this.hitY,speed:s,spin:a}
+}
+,e.prototype.render=function(){
+ctx.save(),ctx.translate(this.x+(tableTop.offsetX+1*this.flailInc)*tableTop.sideMultiplier,this.y+this.celebrateY),ctx.rotate(this.rotation+1*this.flailInc),ctx.scale(this.scale*this.flipX,this.scale*this.flipY);
+var e=this.oGameElementsImgData.oData.oAtlasData[oImageIds["bat"+opBat]].x,t=this.oGameElementsImgData.oData.oAtlasData[oImageIds["bat"+opBat]].y,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds["bat"+opBat]].width,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds["bat"+opBat]].height;
+ctx.drawImage(this.oGameElementsImgData.img,e,t,a,s,-a/2+this.swipeOffsetX,-s/3,a,s),ctx.restore()}
+,e}
+();
+e.EnemyBat=t}
+(Elements||(Elements={
+}
+)),
+function(e){
+var t=function(){
+
+function t(e){
+void 0===e&&(e="user"),this.x=0,this.y=0,this.height=0,this.tablePosY=.5,this.tablePosX=0,this.scale=0,this.lastHit="user",this.speed=.45,this.offTable=!1,this.pause=!1,this.spin=0,this.spinInc=0,this.servingState=0,this.canHit=!1,this.serveFlip=!0,this.offSide=!1,this.bounceX=0,this.bounceY=0,this.ballShortState=0,this.ballType=0,this.hitStop=!1,this.trailSegs=15,this.curBallState=0,this.hasHitNetPvP=!1,this.offTablePvp=!1,this.oGameElementsImgData=assetLib.getData("gameElements"),"enemy"==e&&(this.serveFlip=!1),this.resetServe(e)}
+return t.prototype.resetServe=function(e){
+var t=this;
+2!=gameplayState&&(this.servingState=0,this.canHit=!1,this.hasHitNetPvP=!1,this.offTablePvp=!1,this.hitStop=!1,this.lastHit=e,this.hasHitNet=!1,1==gameVariation&&"user"==this.lastHit?tableTop.newTargetPos(0):0==gameVariation||2==gameVariation?enemyBat.resetToCentre():3==gameVariation&&(this.lastHit="user"),tableTop.tweenToPos(0,1,this.speed,this.lastHit,this.spin),enemyBat.setEnemyLevel(),rallyHits=0,this.x=-100,this.bounceNum=0,this.ballShortState=0,this.offTable=!1,this.offSide=!1,"user"==this.lastHit?(this.tablePosX=0,this.tablePosY=.9,this.height=37.5,this.heightInc=0,this.aTrailPoints=[],this.tableVX=0,this.tableVY=0,userBat.tutInc=0,userBat.tutState=1):(this.tablePosX=0,this.tablePosY=.2,0==gameVariation||2==gameVariation||4==gameVariation?this.height=22.5:(1==gameVariation||3==gameVariation)&&(this.height=45),this.heightInc=0,this.aTrailPoints=[],userBat.tutState=0),0==gameplayState?(this.servePosInc=1,this.canHit=!0):(this.servePosInc=0,this.servePrepTween=TweenLite.to(this,.5,{
+servePosInc:1,ease:"Quad.easeOut",onComplete:function(){
+t.canHit=!0}
+}
+)))}
+,t.prototype.enemyServe=function(){
+0==gameVariation||2==gameVariation||3==gameVariation?this.setBouncePoint(enemyBat.getHitData(this.tablePosX,this.tablePosY)):1==gameVariation&&(playSound("botThrow",.5),this.servingState=2,this.setBouncePoint({
+x:1*Math.random()-.5,y:.8,speed:.3,spin:0}
+),tableTop.botTween&&tableTop.botTween.kill(),tableTop.botY=15,tableTop.botTween=TweenLite.to(tableTop,1,{
+botY:0,ease:"Elastic.easeOut",onComplete:function(){
+}
+}
+))}
+,t.prototype.setBouncePoint=function(t){
+if(this.spin=.65*t.spin,this.spinInc=0,"enemy"==this.lastHit)this.targBounceX=t.x,this.targBounceY=t.y,this.speed=.5*t.speed,tableTop.tweenToPos(this.targBounceX,this.targBounceY,this.speed,this.lastHit,this.spin),tableTop.changeStopVert(!1),0==this.servingState?(this.servingState=1,this.heightInc=-(1.3*((-2400+6*this.height)*(.8-this.speed)*1.2))):0==gameVariation||2==gameVariation||3==gameVariation||4==gameVariation?this.heightInc=(-2400+6*this.height)*(.8-this.speed)*1.3:1==gameVariation&&(this.heightInc=(-2e3+6*this.height)*(.8-this.speed)*1.3);
+else{
+if(this.targBounceX=t.x,this.targBounceY=t.y,this.speed=.5*t.speed,.27==this.speed)for(var a=360*Math.random()*radian,s=0;
+s<8;
+s++){
+var i=new e.Particle(this.x,this.y,1,200*Math.random()+100,a+45*s*radian,1,.5);
+aEffects.push(i)}
+0==this.servingState?(this.servingState=1,this.heightInc=-(1.1*((-2400+6*this.height)*(.8-this.speed)*1.2))):this.heightInc=(-2400+6*this.height)*(.8-this.speed)*1.3,tableTop.tweenToPos(0,1,this.speed,this.lastHit,this.spin),(0==gameVariation||2==gameVariation||3==gameVariation)&&enemyBat.setBouncePos(this.targBounceX,this.targBounceY,this.spin)}
+this.tableVX=(this.targBounceX-this.tablePosX)/((1-this.speed)*1.1),this.tableVY=(this.targBounceY-this.tablePosY)/((1-this.speed)*1.1)}
+,t.prototype.getTargetHitData=function(e,t){
+return{
+x:e/3,y:.75,speed:.3+.3/.4*(.75-.6)*.25,spin:0}
+}
+,t.prototype.userServe=function(e){
+void 0===e&&(e=!1),this.bounceNum=0,this.lastHit="user",hitFirstShot=!0,userBat.tutState=0,playSound("hit"+Math.floor(6*Math.random())),e?0==gameVariation||2==gameVariation||3==gameVariation?this.setBouncePoint({
+x:1*Math.random()-.5,y:.25,speed:.3,spin:0}
+):1==gameVariation&&this.setBouncePoint({
+x:0,y:.25,speed:.3,spin:0}
+):this.setBouncePoint(userBat.getHitData(this.tablePosX,this.tablePosY)),4==gameVariation&&netLib.send(!0,"serveBounce",[Math.round(1e3*this.targBounceX)/1e3,Math.round((1-this.targBounceY)*1e3)/1e3,Math.round(2e3*this.speed)/1e3,Math.round(1e3*this.tablePosX)/1e3,Math.round(1e3*this.tablePosY)/1e3,Math.round(1e3*this.height)/1e3])}
+,t.prototype.hitNetPvP=function(){
+playSound("hitNet"),this.tablePosY=.49,this.hasHitNet=!0,this.hasHitNetPvP=!1,this.tableVY*=-.5,this.tableVX*=.5,this.ballShortState=2,this.heightInc*=.2}
+,t.prototype.update=function(){
+if(0==gameplayState)this.y=onScreenY+50*tableTop.offsetY+this.tablePosY*this.tablePosY*tableDepth*(1+tableTop.offsetY/2)+(1-this.servePosInc)*100,this.tablePosX=Math.min(Math.max((userBat.x-canvas.width/2)/450,-.95),.95),this.x=canvas.width/2,this.scale=.25+(this.y-onScreenY)/800;
+else if(gameplayState>=3)this.y=onScreenY+50*tableTop.offsetY+this.tablePosY*this.tablePosY*tableDepth*(1+tableTop.offsetY/2)+(1-this.servePosInc)*100,this.tablePosX=Math.min(Math.max((userBat.x-canvas.width/2)/450,-.95),.95),this.x=canvas.width/2,this.scale=.25+(this.y-onScreenY)/800;
+else if(1==gameplayState){
+if(0==this.servingState){
+if("user"==this.lastHit){
+this.y=onScreenY+50*tableTop.offsetY+this.tablePosY*this.tablePosY*tableDepth*(1+tableTop.offsetY/2)+(1-this.servePosInc)*100,this.tablePosX=Math.min(Math.max((userBat.x-canvas.width/2)/450,-.95),.95),this.x=canvas.width/2+((this.y-onScreenY)*(tableTop.offsetX+this.tablePosX*ballPosMultiplier)*num128*(1+tableTop.offsetY/2)+this.tablePosX*tableBackWidth/2+tableTop.offsetX*tableTop.sideMultiplier)+-((1-this.servePosInc)*500),this.scale=.25+(this.y-onScreenY)/800;
+var t=userBat.x-this.x,a=userBat.y-100*userBat.scale+130*userBat.scale*Math.max(userBat.batSpreadX,userBat.batSpreadY)-(this.y-this.height*(3*this.scale)-16),s=Math.sqrt(t*t+a*a);
+this.canHit&&userBat.getHitData(this.tablePosX,this.tablePosY).y<.4&&s<130*userBat.scale*Math.max(userBat.batSpreadX,userBat.batSpreadY)&&this.userServe()}
+else this.y=onScreenY+50*tableTop.offsetY+this.tablePosY*this.tablePosY*tableDepth*(1+tableTop.offsetY/2)+(1-this.servePosInc)*100,this.tablePosX=0,4==gameVariation&&(this.tablePosX=Math.min(Math.max((enemyBat.x-canvas.width/2)/200,-.95),.95)),this.x=canvas.width/2+((this.y-onScreenY)*(tableTop.offsetX+this.tablePosX*ballPosMultiplier)*num128*(1+tableTop.offsetY/2)+this.tablePosX*tableBackWidth/2+tableTop.offsetX*tableTop.sideMultiplier)+-((1-this.servePosInc)*500),this.scale=.25+(this.y-onScreenY)/800}
+else{
+if(this.offTable||("user"==this.lastHit?this.spinInc=Math.min(Math.max(this.spinInc+Math.pow(2.5*this.spin,3)*delta*(1-this.tablePosY),-3),3):this.spinInc=Math.min(Math.max(this.spinInc+Math.pow(2*this.spin,3)*delta*this.tablePosY,-2),2),this.tablePosX+=(this.tableVX+this.spinInc)*delta,this.tablePosY+=this.tableVY*delta),!this.offTable&&"user"==this.lastHit&&this.tablePosY<0&&4!=gameVariation&&(this.offTable=!0,this.offTableVX=(this.x-this.aTrailPoints[Math.max(this.aTrailPoints.length-5,0)].x)*10,this.offTableVY=(this.y-this.aTrailPoints[Math.max(this.aTrailPoints.length-5,0)].y)*10,this.offTableTween&&this.offTableTween.kill(),this.offTableTween=TweenLite.to(this,2,{
+offTableVX:0,offTableVY:0,ease:"Quad.easeOut"}
+),(0==gameVariation||2==gameVariation)&&enemyBat.flail(),(rallyHits>8||Math.random()>.8||0==saveDataHandler.getLevel()&&0==curLevelStars)&&(0==gameVariation||2==gameVariation))){
+userBat.successFlip(),panel.showCongrats(),playSound("hitTarget",.3),playSound("cheer"+Math.floor(6*Math.random()));
+for(var i=0;
+i<25;
+i++){
+var r=new e.Confetti(canvas.width/2+400*Math.random()-200,.9*canvas.height);
+aEffects.push(r)}
+}
+if(this.heightInc+=5700*delta,this.height-=this.heightInc*this.speed*delta,4==gameVariation&&this.hasHitNetPvP&&this.hitNetPvP(),1==this.ballShortState&&this.tablePosY<=.5&&"user"==this.lastHit&&(playSound("hitNet"),this.hasHitNet=!0,this.tableVY*=-.5,this.tableVX*=.5,this.ballShortState=2,this.heightInc*=.2,4==gameVariation&&netLib.send(!0,"hitNet")),3==gameVariation&&"user"==this.lastHit&&this.tablePosY<.5&&0==this.curBallState&&this.height<30&&tableTop.checkZombieHit(this.x,this.y),this.tablePosX>-1&&this.tablePosX<1&&this.tablePosY>0&&this.tablePosY<1&&this.height<=0&&!this.offSide){
+if(this.height=0,this.heightInc*=-.85,0==this.ballShortState?playSound("bounce"+Math.floor(6*Math.random())):this.height=-3,this.bounceNum++,this.bounceX=this.tablePosX,this.bounceY=this.tablePosY,tableTop.bounce(Math.max(Math.min(-this.heightInc/1500,1),.1)),"user"==this.lastHit&&this.tablePosY>.5&&this.servingState>1&&(this.spin=0,this.ballShortState=1),1==gameVariation&&"user"==this.lastHit&&this.tablePosY<.5&&0==this.curBallState){
+var o=this.x-tableTop.holeX,n=this.y-tableTop.holeY;
+o*o/((306*tableTop.holeScale+50*this.scale)*(306*tableTop.holeScale+50*this.scale))+n*n/((112*tableTop.holeScale+25*this.scale)*(112*tableTop.holeScale+25*this.scale))<=1?(tableTop.holeHit(),setTimeout(function(){
+var t=new e.Ball("enemy");
+aBalls.push(t),t.enemyServe()}
+,1e3)):(tableTop.holeMiss(),userInput.removeHitArea("pause"),setTimeout(function(){
+playSound("targetGameEnd"),curTargetScore>10&&playSound("cheer"+Math.floor(6*Math.random())),initTargetGameEnd()}
+,1e3)),this.curBallState=1}
+}
+else(this.tablePosX<-1||this.tablePosX>1)&&!this.offTable&&this.tablePosY<1&&this.height<=0&&(this.offSide||netLib.send(!0,"offSide"),this.offSide=!0);
+if(4==gameVariation&&this.tablePosY<0&&this.height<=0&&("user"==this.lastHit||this.hasHitNet?this.offTable=!0:this.offTable=!1),!this.offTablePvp&&"user"==this.lastHit&&this.tablePosY<0&&(this.offTablePvp=!0,this.offTableVX=(this.x-this.aTrailPoints[Math.max(this.aTrailPoints.length-5,0)].x)*10,this.offTableVY=(this.y-this.aTrailPoints[Math.max(this.aTrailPoints.length-5,0)].y)*10,this.offTableTween&&this.offTableTween.kill(),this.offTableTween=TweenLite.to(this,2,{
+offTableVX:0,offTableVY:0,ease:"Quad.easeOut"}
+)),(this.offTable||this.offSide)&&this.height<=-200){
+if(1==this.curBallState){
+this.curBallState=2;
+return}
+"user"==this.lastHit?4!=gameVariation&&(0==this.bounceNum||this.hitStop||this.hasHitNet?updateScore("enemy"):1==this.servingState&&1==this.bounceNum?updateScore("enemy"):updateScore("user")):0==this.bounceNum||this.hasHitNet?(updateScore("user"),4==gameVariation&&netLib.send(!0,"ballOff",[0])):(updateScore("enemy"),4==gameVariation&&netLib.send(!0,"ballOff",[1])),"enemy"==this.lastHit||4!=gameVariation?this.nextServeChoice():this.servingState=-1;
+return}
+if((4==gameVariation||this.offTable)&&(4!=gameVariation||this.offTablePvp)?(this.x+=this.offTableVX*delta,this.y+=this.offTableVY*delta):(this.y=onScreenY+50*tableTop.offsetY+this.tablePosY*this.tablePosY*tableDepth*(1+tableTop.offsetY/2),this.x=canvas.width/2+(this.y-onScreenY)*(tableTop.offsetX+this.tablePosX*ballPosMultiplier)*num128*(1+tableTop.offsetY/2)+this.tablePosX*tableBackWidth/2+tableTop.offsetX*tableTop.sideMultiplier),this.scale=.25+(this.y-onScreenY)/800,this.aTrailPoints.push({
+x:this.x,y:this.y,height:this.height,scale:this.scale,power:(this.speed-.12)/.12}
+),this.aTrailPoints.length>this.trailSegs&&this.aTrailPoints.shift(),this.y>canvas.height){
+if(1==this.curBallState){
+this.curBallState=2;
+return}
+(0==gameVariation||2==gameVariation||4==gameVariation)&&(this.bounceNum>0||this.ballShortState>0?(updateScore("enemy"),4==gameVariation&&netLib.send(!0,"ballOff",[1])):(updateScore("user"),4==gameVariation&&netLib.send(!0,"ballOff",[0]))),this.nextServeChoice();
+return}
+var l=1+Math.min(Math.abs(userBat.prevX-userBat.x),225)*userBat.batSpreadMultiplier,m=1+Math.min(Math.abs(userBat.prevY-userBat.y),225)*userBat.batSpreadMultiplier;
+userBat.batSpreadX-=(userBat.batSpreadX-l)*.2,userBat.batSpreadY-=(userBat.batSpreadY-m)*.2;
+var t=userBat.x-this.x,a=userBat.y-100*userBat.scale+130*userBat.scale*Math.max(userBat.batSpreadX,userBat.batSpreadY)-(this.y-this.height*(3*this.scale)-16),s=Math.sqrt(t*t+a*a);
+"enemy"==this.lastHit&&(2==this.servingState&&1==this.bounceNum||1==this.servingState&&2==this.bounceNum)&&this.tablePosY>.5&&s<130*userBat.scale*Math.max(userBat.batSpreadX,userBat.batSpreadY)&&(playSound("hit"+Math.floor(6*Math.random())),rallyHits++,this.servingState=2,this.bounceNum=0,this.lastHit="user",this.setBouncePoint(userBat.getHitData(this.tablePosX,this.tablePosY)),4==gameVariation&&netLib.send(!0,"hitBounce",[Math.round(1e3*this.targBounceX)/1e3,Math.round((1-this.targBounceY)*1e3)/1e3,Math.round(2e3*this.speed)/1e3,Math.round(1e3*this.tablePosX)/1e3,Math.round(1e3*this.tablePosY)/1e3,Math.round(1e3*this.height)/1e3])),0==gameVariation||2==gameVariation?"user"==this.lastHit&&(2==this.servingState&&1==this.bounceNum||1==this.servingState&&2==this.bounceNum)&&this.tablePosY<.5&&this.tablePosY>0&&enemyBat.x>this.x-70*enemyBat.scale&&enemyBat.x<this.x+70*enemyBat.scale&&enemyBat.y>this.y-this.height*(3*this.scale)-16-82*enemyBat.scale&&enemyBat.y<this.y-this.height*(3*this.scale)-16+82*enemyBat.scale&&(playSound("hit"+Math.floor(6*Math.random())),rallyHits++,this.servingState=2,this.bounceNum=0,this.lastHit="enemy",this.setBouncePoint(enemyBat.getHitData(this.tablePosX,this.tablePosY))):3==gameVariation&&"user"==this.lastHit&&(2==this.servingState||1==this.servingState)&&this.tablePosY<.1&&(playSound("hit"+Math.floor(6*Math.random())),this.servingState=2,this.bounceNum=0,this.lastHit="enemy",this.setBouncePoint({
+x:Math.max(Math.min(.75*this.tablePosX,.8),-.8),y:.8,speed:.3,spin:0}
+))}
+}
+}
+,t.prototype.nextServeChoice=function(){
+((oGameData.userScore+oGameData.enemyScore)%2==0||oGameData.userScore>=10&&oGameData.enemyScore>=10)&&(this.serveFlip=!this.serveFlip),this.serveFlip&&1!=gameVariation?this.resetServe("user"):(this.resetServe("enemy"),1==gameVariation&&this.enemyServe())}
+,t.prototype.render=function(){
+if(!(gameplayState>1)){
+if(this.tablePosX>-1&&this.tablePosX<1&&this.tablePosY>0&&this.tablePosY<1){
+ctx.save(),ctx.globalAlpha=Math.max(1-this.height/100,.25);
+var e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.ballShadow].x,t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.ballShadow].y,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.ballShadow].width,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.ballShadow].height;
+ctx.drawImage(this.oGameElementsImgData.img,e,t,a,s,this.x-a/2*this.scale,this.y-s/2*this.scale,a*this.scale,s*this.scale),ctx.restore()}
+"enemy"==this.lastHit&&0==this.ballShortState&&this.renderTrail();
+var e=this.oGameElementsImgData.oData.oAtlasData[oImageIds["ball"+this.ballType]].x,t=this.oGameElementsImgData.oData.oAtlasData[oImageIds["ball"+this.ballType]].y,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds["ball"+this.ballType]].width,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds["ball"+this.ballType]].height;
+ctx.drawImage(this.oGameElementsImgData.img,e,t,a,s,this.x-a/2*this.scale,this.y-s/2*this.scale-this.height*(3*this.scale)-23,a*this.scale,s*this.scale),"user"==this.lastHit&&0==this.ballShortState&&this.renderTrail()}
+}
+,t.prototype.renderTrail=function(){
+if(this.aTrailPoints.length>1&&this.scale>0)for(var e=0;
+e<this.aTrailPoints.length;
+e++)ctx.fillStyle="rgba(255, 255, 100,"+e/this.aTrailPoints.length*.3+")",ctx.beginPath(),ctx.arc(this.aTrailPoints[e].x,this.aTrailPoints[e].y-this.aTrailPoints[e].height*(3*this.aTrailPoints[e].scale)-23,20*this.scale,0,2*Math.PI),ctx.fill()}
+,t}
+();
+e.Ball=t}
+(Elements||(Elements={
+}
+)),
+function(e){
+var t=function(){
+
+function t(){
+this.segs=100,this.offsetX=0,this.offsetY=0,this.netY=0,this.segMultiplier=1,this.netHeight=0,this.id=0,this.sideMultiplier=100,this.bounceMarkScale=0,this.targetX=0,this.stopHeight=0,this.stopOffsetX=0,this.canChangeStop=!1,this.holeFixedScale=1,this.holeHitScale=0,this.blockOffsetY=0,this.tableHeight=352,this.edgeMultuplier=1.46,this.botY=0,this.zoomScale=0,this.zoomAlpha=0,this.targId=0,this.aZombies=[],this.zombieScale=90,this.aColours=["#00e9b2","#00ddd9","#00d2f5","#0bc4ff","#7ab2ff","#8babff","#a4a3ff","#c098ff","#e085ff","#ff70fd","#ff6dd4","#ff70b1","#ff7092","#ff6e71","#fc7954","#ff874c","#ff9644","#ffa53c","#ffb434","#ffc42e","#e4d026","#c5da2e","#a3e342","#7bea5c","#42f079","#42f079"],this.aBugColours=["#E6B763","#61F295","#CFE458","#FC8995","#F7E497","#F1394B","#DF7FAB","#80EEF3"],this.oGameElementsImgData=assetLib.getData("gameElements"),this.id=0,this.setTableCol()}
+return t.prototype.setZombieStart=function(){
+this.zombieBase={
+x:0,y:0,offsetX:0,offsetY:.25,energy:1,height:0}
+,this.aZombies=[];
+for(var e=0;
+e<Math.min(bugWave+5,15);
+e++)this.aZombies.push(this.resetZombie(e))}
+,t.prototype.resetZombie=function(e){
+var t={
+id:e,x:0,y:0,offsetX:0,offsetY:0,startX:2*Math.random()-1,startY:.3*Math.random()+.1,endX:1.6*Math.random()-.8,endY:.3*Math.random()+.1,energy:1,height:0,speed:.05*Math.random()+.05,scale:1,tweenScale:0,canHit:!0}
+,a=TweenLite.to(t,.5,{
+tweenScale:1,ease:"Back.easeOut",onComplete:function(){
+}
+}
+);
+return t.tween=a,t}
+,t.prototype.checkZombieHit=function(t,a){
+for(var s=this,i=0;
+i<this.aZombies.length;
+i++){
+var r=t-this.aZombies[i].x,o=a-this.aZombies[i].y;
+if(this.aZombies[i].canHit&&r*r/(this.zombieScale*this.aZombies[i].scale*(this.zombieScale*this.aZombies[i].scale))+o*o/(.5*this.zombieScale*this.aZombies[i].scale*(.37*this.zombieScale*this.aZombies[i].scale))<=1){
+bugScore++;
+for(var n=30*radian,l=0;
+l<5;
+l++){
+var m=new e.Particle(this.aZombies[i].x,this.aZombies[i].y,.5*Math.random()+.75,200*Math.random()+200,n+30*l*radian+(10*Math.random()-5)*radian,15,1,25,this.aBugColours[this.aZombies[i].id%8]);
+aEffects.push(m)}
+panel.tweenTargetGameScore(),this.aZombies[i].canHit=!1,playSound("bugSplat"+Math.floor(5*Math.random()),.5*Math.random()+.3),this.aZombies[i].tween&&this.aZombies[i].tween.kill();
+var h=this.aZombies[i].id;
+this.aZombies[i].tween=TweenLite.to(this.aZombies[i],.25,{
+tweenScale:0,ease:"Cubic.easeOut",onCompleteParams:[this,h],onComplete:function(e,t){
+++bugWaveKilled>=Math.min(bugWave+5,15)&&(playSound("winSet",.3),playSound("cheer"+Math.floor(6*Math.random())),s.tweenColours(),bugWave++,bugWaveKilled=0,s.setZombieStart(),panel.addBugTime())}
+}
+)}
+}
+}
+,t.prototype.setTableCol=function(){
+0==gameplayState||0==gameVariation?this.colourId=Math.floor(curLevel)%this.aColours.length:this.colourId=Math.floor(Math.random()*this.aColours.length),this.gradientId=this.colourId}
+,t.prototype.tweenColours=function(){
+this.fadeTween&&this.fadeTween.kill(),this.gradientId=this.colourId,this.fadeTween=TweenLite.to(this,.75,{
+gradientId:this.colourId+this.aColours.length,ease:"none"}
+)}
+,t.prototype.startBot=function(){
+this.botTween&&this.botTween.kill(),this.botY=50,this.botTween=TweenLite.to(this,.5,{
+botY:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+)}
+,t.prototype.zoomTarget=function(){
+this.targetZoomTween&&this.targetZoomTween.kill(),this.zoomScale=this.holeScale,this.zoomX=this.holeX,this.zoomY=this.holeY,this.zoomAlpha=1,this.targetZoomTween=TweenLite.to(tableTop,.5,{
+zoomScale:3*this.zoomScale,zoomAlpha:0,ease:"Cubic.easeOut",onComplete:function(){
+}
+}
+)}
+,t.prototype.setTarget=function(){
+this.holeX=0,this.holeY=0,this.holeOffsetX=0,this.holeOffsetY=.3,this.holeTween&&this.holeTween.kill(),this.holeTween=TweenLite.to(this,.25,{
+holeOffsetX:0,holeOffsetY:.3,holeHitScale:Math.max(this.holeFixedScale*=.97,.35),ease:"Quad.easeInOut",onComplete:function(){
+}
+}
+)}
+,t.prototype.changeHolePos=function(){
+this.targId=0,this.holeTween=TweenLite.to(this,.25,{
+holeOffsetX:1.2*Math.random()-.6,holeOffsetY:.25*Math.random()+.2,holeHitScale:Math.max(this.holeFixedScale*=.97,.35),ease:"Quad.easeInOut",onComplete:function(){
+}
+}
+)}
+,t.prototype.holeHit=function(){
+var t=this;
+this.holeTween&&this.holeTween.kill(),playSound("hitTarget",.3),this.tweenColours(),curTargetScore++,saveDataHandler.setBestTargetScore(curTargetScore),panel.tweenTargetGameScore(),this.zoomTarget(),this.targId=1,curTargetScore>=10&&curTargetScore%5==0&&playSound("cheer"+Math.floor(6*Math.random())),this.holeTween=TweenLite.to(this,.25,{
+holeHitScale:0,ease:"Back.easeIn",onComplete:function(){
+t.changeHolePos()}
+}
+);
+for(var a=30*radian,s=0;
+s<20;
+s++){
+var i=new e.Particle(aBalls[curBallId].x,aBalls[curBallId].y,.5*Math.random()+.75,200*Math.random()+200,a+120/19*s*radian,15,1,25);
+aEffects.push(i)}
+}
+,t.prototype.holeMiss=function(){
+playSound("missTarget",.7),this.holeFixedScale=1,this.holeTween=TweenLite.to(this,.25,{
+holeHitScale:0,ease:"Back.easeIn",onComplete:function(){
+}
+}
+),tableTop.botTween&&tableTop.botTween.kill(),tableTop.botTween=TweenLite.to(tableTop,1,{
+botY:50,ease:"Bounce.easeOut",onComplete:function(){
+}
+}
+)}
+,t.prototype.changeStopVert=function(e){
+e?(this.stopTweenVert&&this.stopTweenVert.kill(),this.canChangeStop=!1,this.stopTweenVert=TweenLite.to(this,.2,{
+stopHeight:Math.floor(1.5*Math.random()),ease:"Quad.easeOut"}
+)):(this.stopTweenVert&&this.stopTweenVert.kill(),this.canChangeStop=!0,this.stopTweenVert=TweenLite.to(this,.2,{
+stopHeight:1,stopOffsetX:1*Math.random()-.5,ease:"Quad.easeOut"}
+))}
+,t.prototype.bounce=function(e){
+this.bounceMarkScale=e}
+,t.prototype.tweenToPos=function(e,t,a,s,i){
+this.offsetTween&&this.offsetTween.kill();
+var r=0,o=0;
+(e>.3||e<-.3)&&(r=-e/1.75-i/2);
+var n=1;
+"enemy"==s&&(n=.75,o=(1-(t-.5)*2)*(.3-(a-.3))/.3),this.offsetTween=TweenLite.to(this,n,{
+offsetX:r,offsetY:o,ease:"Quad.easeOut"}
+)}
+,t.prototype.newTargetPos=function(e){
+var t;
+void 0===e&&(e=null),t=null==e?250*Math.random()-125:e,this.targetTween&&this.targetTween.kill(),this.targetTween=TweenLite.to(this,.75,{
+targetX:t,ease:"Quad.easeInOut"}
+)}
+,t.prototype.render=function(){
+var e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.net].height;
+if(onScreenY=canvas.height<1.2*canvas.width?canvas.height/4:.35*canvas.height,this.genScale=1+this.offsetY/3,this.netY=onScreenY-e+this.tableHeight/this.segs*(.282*this.segs)*this.genScale+50*this.offsetY,this.netHeight=e*this.genScale,1==gameVariation){
+var t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.bot].x,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.bot].y,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.bot].width,e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.bot].height,i=onScreenY+50*this.offsetY;
+ctx.drawImage(this.oGameElementsImgData.img,t,a,s,e,canvas.width/2-s/2*this.genScale+this.offsetX*(0*this.segs)*3*this.edgeMultuplier*this.genScale+this.offsetX*this.edgeMultuplier*this.sideMultiplier,i-100*this.genScale+this.botY*this.genScale,s*this.genScale,e*this.genScale)}
+if(3==gameVariation){
+var r=getSpriteData(assetLib.getData("bugs"),"bugBack"),o=canvas.width/2+this.offsetX*(0*this.segs)*3*this.edgeMultuplier*this.genScale+this.offsetX*this.edgeMultuplier*this.sideMultiplier,n=onScreenY+50*this.offsetY;
+ctx.drawImage(r.img,r.bX,r.bY,r.bWidth,r.bHeight,o-r.bWidth/2*this.genScale,n-.4*r.bHeight*this.genScale,r.bWidth*this.genScale,r.bHeight*this.genScale),addDirectText(0,50*this.genScale,canvas.width/2,"center",o,n-20*this.genScale,"WAVE "+panel.twoDigit(bugWave+1),"#FF7000")}
+var t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.tableClip].x,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.tableClip].y,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.tableClip].width,e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.tableClip].height;
+ctx.drawImage(this.oGameElementsImgData.img,t,a,s,e,canvas.width/2-s/2*(1+this.offsetY/3)+this.offsetX*(.282*this.segs)*3*this.edgeMultuplier*(1+this.offsetY/3)+this.offsetX*this.edgeMultuplier*this.sideMultiplier*this.segMultiplier,this.netY+this.netHeight-3*(1+this.offsetY/3),s*(1+this.offsetY/3),e*(1+this.offsetY/3));
+var l=176*this.genScale,m=(543*.282+352)/2*this.genScale,h=447.5*this.genScale,i=onScreenY+50*this.offsetY,d=this.netY+this.netHeight,u=onScreenY+352*(1+this.offsetY/2)+50*this.offsetY,c=this.offsetX*this.sideMultiplier*this.edgeMultuplier,g=(this.offsetX*(.282*100)*3*this.genScale+this.offsetX*this.sideMultiplier)*this.edgeMultuplier,p=(300*this.offsetX*this.genScale+this.offsetX*this.sideMultiplier)*this.edgeMultuplier;
+ctx.fillStyle="#333333",ctx.beginPath(),ctx.moveTo(canvas.width/2-l+c,i),ctx.lineTo(canvas.width/2+l+c,i),ctx.lineTo(canvas.width/2+h+p,u),ctx.lineTo(canvas.width/2-h+p,u),ctx.lineTo(canvas.width/2-l+c,i),ctx.closePath(),ctx.fill(),ctx.fillStyle="#FFFFFF",ctx.beginPath(),ctx.moveTo(canvas.width/2-l+c+2*this.genScale,i+2*this.genScale),ctx.lineTo(canvas.width/2+l+c-2*this.genScale,i+2*this.genScale),ctx.lineTo(canvas.width/2+h+p-6*this.genScale,u),ctx.lineTo(canvas.width/2-h+p+6*this.genScale,u),ctx.lineTo(canvas.width/2-l+c+2*this.genScale,i+2*this.genScale),ctx.closePath(),ctx.fill();
+var $=ctx.createLinearGradient(canvas.width/2,i+4*this.genScale,canvas.width/2,u-13*this.genScale);
+if($.addColorStop(0,this.aColours[Math.floor(this.gradientId)%this.aColours.length]),$.addColorStop(.5,this.aColours[Math.floor(this.gradientId+1)%this.aColours.length]),$.addColorStop(1,this.aColours[Math.floor(this.gradientId+2)%this.aColours.length]),ctx.fillStyle=$,ctx.beginPath(),ctx.moveTo(canvas.width/2-l+c+10*this.genScale,i+4*this.genScale),ctx.lineTo(canvas.width/2-2*this.genScale+c,i+4*this.genScale),ctx.lineTo(canvas.width/2-8*this.genScale+p,u-13*this.genScale),ctx.lineTo(canvas.width/2-h+p+40*this.genScale,u-13*this.genScale),ctx.lineTo(canvas.width/2-l+c+10*this.genScale,i+4*this.genScale),ctx.closePath(),ctx.fill(),ctx.beginPath(),ctx.moveTo(canvas.width/2+2*this.genScale+c,i+4*this.genScale),ctx.lineTo(canvas.width/2+l+c-10*this.genScale,i+4*this.genScale),ctx.lineTo(canvas.width/2+h+p-40*this.genScale,u-13*this.genScale),ctx.lineTo(canvas.width/2+8*this.genScale+p,u-13*this.genScale),ctx.lineTo(canvas.width/2+2*this.genScale+c,i+4*this.genScale),ctx.closePath(),ctx.fill(),1==gameVariation){
+ctx.save(),ctx.beginPath(),ctx.moveTo(canvas.width/2-l+c+2*this.genScale,i+2*this.genScale),ctx.lineTo(canvas.width/2+l+c-2*this.genScale,i+2*this.genScale),ctx.lineTo(canvas.width/2+m+g-6*this.genScale,d),ctx.lineTo(canvas.width/2-m+g+6*this.genScale,d),ctx.lineTo(canvas.width/2-l+c+2*this.genScale,i+2*this.genScale),ctx.closePath(),ctx.clip();
+var t=this.oGameElementsImgData.oData.oAtlasData[oImageIds["target"+this.targId]].x,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds["target"+this.targId]].y,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds["target"+this.targId]].width,e=this.oGameElementsImgData.oData.oAtlasData[oImageIds["target"+this.targId]].height;
+this.holeY=onScreenY+50*this.offsetY+this.holeOffsetY*this.holeOffsetY*tableDepth*(1+this.offsetY/2),this.holeX=canvas.width/2+(this.holeY-onScreenY)*(this.offsetX+this.holeOffsetX*ballPosMultiplier)*.85*(1+this.offsetY/2)+this.holeOffsetX*tableBackWidth/2+this.offsetX*this.sideMultiplier,this.holeScale=this.genScale*(.3+.5*this.holeOffsetY)*this.holeHitScale,ctx.drawImage(this.oGameElementsImgData.img,t,a,s,e,this.holeX-s/2*this.holeScale,this.holeY-e/2*this.holeScale,s*this.holeScale,e*this.holeScale),ctx.restore()}
+if(3==gameVariation){
+this.aZombies=sortBy(this.aZombies,"y");
+for(var v=0;
+v<this.aZombies.length;
+v++){
+var r=getSpriteData(assetLib.getData("bugs"),"bug"+this.aZombies[v].id%8);
+this.aZombies[v].offsetX=this.aZombies[v].startX+(this.aZombies[v].endX-this.aZombies[v].startX)*(Math.sin(panel.incY*this.aZombies[v].speed+this.aZombies[v].id)+1)*.5,this.aZombies[v].offsetY=this.aZombies[v].startY+(this.aZombies[v].endY-this.aZombies[v].startY)*(Math.sin(panel.incY*this.aZombies[v].speed+this.aZombies[v].id)+1)*.5,this.aZombies[v].y=onScreenY+50*this.offsetY+this.aZombies[v].offsetY*this.aZombies[v].offsetY*tableDepth*(1+this.offsetY/2),this.aZombies[v].x=canvas.width/2+(this.aZombies[v].y-onScreenY)*(this.offsetX+this.aZombies[v].offsetX*ballPosMultiplier)*.85*(1+this.offsetY/2)+this.aZombies[v].offsetX*tableBackWidth/2+this.offsetX*this.sideMultiplier,this.aZombies[v].scale=this.genScale*(.3+.5*this.aZombies[v].offsetY);
+var I=1+.1*Math.sin(panel.incY+this.aZombies[v].id);
+ctx.drawImage(r.img,r.bX,r.bY,r.bWidth,r.bHeight,this.aZombies[v].x-r.bWidth/2*this.aZombies[v].scale*this.aZombies[v].tweenScale,this.aZombies[v].y-.8*r.bHeight*this.aZombies[v].scale*I*this.aZombies[v].tweenScale,r.bWidth*this.aZombies[v].scale*this.aZombies[v].tweenScale,r.bHeight*this.aZombies[v].scale*this.aZombies[v].tweenScale*I)}
+}
+ctx.save(),ctx.beginPath(),ctx.moveTo(canvas.width/2-l+c+2*this.genScale,i+2*this.genScale),ctx.lineTo(canvas.width/2+l+c-2*this.genScale,i+2*this.genScale),ctx.lineTo(canvas.width/2+h+p-6*this.genScale,u),ctx.lineTo(canvas.width/2-h+p+6*this.genScale,u),ctx.lineTo(canvas.width/2-l+c+2*this.genScale,i+2*this.genScale),ctx.closePath(),ctx.clip();
+var t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.netReflect].x,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.netReflect].y,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.netReflect].width,e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.netReflect].height;
+ctx.drawImage(this.oGameElementsImgData.img,t,a,s,e,canvas.width/2-s/2*this.genScale+this.offsetX*(.282*this.segs)*3*this.edgeMultuplier*this.genScale+this.offsetX*this.edgeMultuplier*this.sideMultiplier*this.segMultiplier,this.netY+(e-4)*this.genScale,s*this.genScale,e*this.genScale);
+var t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.batShadow].x,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.batShadow].y,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.batShadow].width,e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.batShadow].height;
+if(ctx.drawImage(this.oGameElementsImgData.img,t,a,s,e,userBat.x-s/2*userBat.scale,userBat.y-(e/2-200)*userBat.scale,s*userBat.scale,e*userBat.scale),0==gameVariation||2==gameVariation||4==gameVariation){
+var t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.batShadow].x,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.batShadow].y,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.batShadow].width,e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.batShadow].height;
+ctx.drawImage(this.oGameElementsImgData.img,t,a,s,e,enemyBat.x-s/2*enemyBat.scale+(this.offsetX+1*enemyBat.flailInc)*this.sideMultiplier+enemyBat.swipeOffsetX*enemyBat.scale,enemyBat.y-(e/2-200)*enemyBat.scale,s*enemyBat.scale,e*enemyBat.scale)}
+ctx.restore();
+var t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.tableEdge].x,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.tableEdge].y,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.tableEdge].width,e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.tableEdge].height;
+if(ctx.drawImage(this.oGameElementsImgData.img,t,a,s,e,canvas.width/2-s/2*(1+this.offsetY/3)+300*this.offsetX*this.edgeMultuplier*(1+this.offsetY/3)+this.offsetX*this.edgeMultuplier*this.sideMultiplier,onScreenY+this.tableHeight*(1+this.offsetY/2)+50*this.offsetY,s*(1+this.offsetY/3),e*(1+this.offsetY/3)),this.zoomAlpha>0){
+var r=getSpriteData(assetLib.getData("gameElements"),"targetZoom");
+ctx.save(),ctx.globalAlpha=this.zoomAlpha,ctx.drawImage(r.img,r.bX,r.bY,r.bWidth,r.bHeight,this.zoomX-r.bWidth/2*this.zoomScale,this.zoomY-r.bHeight/2*this.zoomScale,r.bWidth*this.zoomScale,r.bHeight*this.zoomScale),ctx.restore()}
+if(this.bounceMarkScale>0&&aBalls.length>0){
+this.bounceMarkScale-=3*delta;
+var t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.bounceMark].x,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.bounceMark].y,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.bounceMark].width,e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.bounceMark].height,b=onScreenY+50*this.offsetY+aBalls[curBallId].bounceY*aBalls[curBallId].bounceY*tableDepth*(1+this.offsetY/2),_=canvas.width/2+(b-onScreenY)*(this.offsetX+aBalls[curBallId].bounceX*ballPosMultiplier)*num128*(1+this.offsetY/2)+aBalls[curBallId].bounceX*tableBackWidth/2+this.offsetX*this.sideMultiplier,B=.6+(b-onScreenY)/600;
+ctx.drawImage(this.oGameElementsImgData.img,t,a,s,e,_-s/2*(B*this.bounceMarkScale),b-e/2*(B*this.bounceMarkScale),s*(B*this.bounceMarkScale),e*(B*this.bounceMarkScale))}
+}
+,t.prototype.renderNet=function(){
+var e=this.oGameElementsImgData.oData.oAtlasData[oImageIds.net].x,t=this.oGameElementsImgData.oData.oAtlasData[oImageIds.net].y,a=this.oGameElementsImgData.oData.oAtlasData[oImageIds.net].width,s=this.oGameElementsImgData.oData.oAtlasData[oImageIds.net].height;
+ctx.drawImage(this.oGameElementsImgData.img,e,t,a,s,canvas.width/2-a/2*this.genScale+this.offsetX*(.282*this.segs)*3*this.edgeMultuplier*this.genScale+this.offsetX*this.edgeMultuplier*this.sideMultiplier*this.segMultiplier,this.netY,a*this.genScale,this.netHeight)}
+,t}
+();
+e.TableTop=t}
+(Elements||(Elements={
+}
+)),
+function(e){
+var t=function(){
+
+function e(){
+this.oTextData={

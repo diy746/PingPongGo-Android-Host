@@ -1,0 +1,216 @@
+const http = require("http");
+const crypto = require("crypto");
+const fs = require("fs");
+const { WebSocketServer } = require("ws");
+
+const PORT = process.env.SIGNAL_PORT || 8124;
+
+const clients = new Map(); // id -> ws
+const lobbies = new Map(); // code -> {code, peers:Set, leader, term}
+
+function id(prefix = "") {
+  return prefix + crypto.randomBytes(4).toString("hex");
+}
+
+function shortCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 4; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
+function send(ws, obj) {
+  if (ws.readyState === ws.OPEN) {
+    ws.send(JSON.stringify(obj));
+  }
+}
+
+function broadcastLobby(lobby) {
+  const info = {
+    code: lobby.code,
+    leader: lobby.leader,
+    term: lobby.term,
+    players: [...lobby.peers],
+  };
+
+  for (const pid of lobby.peers) {
+    const peer = clients.get(pid);
+    if (peer) send(peer, { type: "lobbyUpdated", lobbyInfo: info });
+  }
+}
+
+const server = http.createServer();
+const wss = new WebSocketServer({ server, path: "/v0/signaling" });
+
+wss.on("connection", (ws) => {
+  ws.id = null;
+  ws.secret = null;
+  ws.lobby = null;
+
+  ws.on("message", (buf) => {
+    let msg;
+    try {
+      msg = JSON.parse(buf.toString());
+    } catch {
+      return;
+    }
+
+    console.log("IN", ws.id || "-", msg.type, msg);
+
+    if (msg.type === "hello") {
+      ws.id = msg.id || id("p");
+      ws.secret = msg.secret || id("s");
+      clients.set(ws.id, ws);
+
+      send(ws, {
+        type: "welcome",
+        id: ws.id,
+        secret: ws.secret,
+      });
+      return;
+    }
+
+    if (msg.type === "ping") {
+      send(ws, { type: "ping" });
+      return;
+    }
+
+    if (msg.type === "credentials") {
+      send(ws, { type: "credentials" });
+      return;
+    }
+
+
+    if (msg.type === "create") {
+      let code = shortCode();
+      while (lobbies.has(code)) code = shortCode();
+
+      const lobby = {
+        code,
+        peers: new Set([ws.id]),
+        leader: ws.id,
+        term: 1,
+        maxPlayers: msg.maxPlayers || 2,
+      };
+
+      lobbies.set(code, lobby);
+      ws.lobby = code;
+
+      const info = {
+        code,
+        leader: lobby.leader,
+        term: lobby.term,
+        players: [...lobby.peers],
+        maxPlayers: lobby.maxPlayers,
+      };
+
+      send(ws, {
+        type: "joined",
+        rid: msg.rid,
+        lobbyInfo: info,
+      });
+
+      fs.writeFileSync("current-lobby.txt", code + "\n");
+      console.log("CREATED LOBBY", code, "by", ws.id);
+      return;
+    }
+
+    if (msg.type === "join") {
+      let code = msg.lobby || msg.code || msg.id;
+
+      if (!code) {
+        code = shortCode();
+        while (lobbies.has(code)) code = shortCode();
+        lobbies.set(code, {
+          code,
+          peers: new Set(),
+          leader: ws.id,
+          term: 1,
+        });
+      }
+
+      if (!lobbies.has(code)) {
+        lobbies.set(code, {
+          code,
+          peers: new Set(),
+          leader: ws.id,
+          term: 1,
+        });
+      }
+
+      const lobby = lobbies.get(code);
+      lobby.peers.add(ws.id);
+      ws.lobby = code;
+
+      const info = {
+        code,
+        leader: lobby.leader,
+        term: lobby.term,
+        players: [...lobby.peers],
+      };
+
+      send(ws, {
+        type: "joined",
+        lobbyInfo: info,
+      });
+
+      for (const pid of lobby.peers) {
+        if (pid !== ws.id) {
+          const other = clients.get(pid);
+          if (other) {
+            send(other, { type: "connect", id: ws.id, polite: false });
+            send(ws, { type: "connect", id: pid, polite: true });
+          }
+        }
+      }
+
+      broadcastLobby(lobby);
+      return;
+    }
+
+    if (msg.type === "leave") {
+      if (ws.lobby && lobbies.has(ws.lobby)) {
+        const lobby = lobbies.get(ws.lobby);
+        lobby.peers.delete(ws.id);
+        broadcastLobby(lobby);
+      }
+      ws.lobby = null;
+      return;
+    }
+
+    if (msg.type === "description" || msg.type === "candidate") {
+      const target = clients.get(msg.recipient);
+      if (target) send(target, msg);
+      return;
+    }
+
+    if (msg.type === "event") {
+      if (ws.lobby && lobbies.has(ws.lobby)) {
+        for (const pid of lobbies.get(ws.lobby).peers) {
+          if (pid !== ws.id) {
+            const peer = clients.get(pid);
+            if (peer) send(peer, msg);
+          }
+        }
+      }
+      return;
+    }
+  });
+
+  ws.on("close", () => {
+    if (ws.id) clients.delete(ws.id);
+    if (ws.lobby && lobbies.has(ws.lobby)) {
+      const lobby = lobbies.get(ws.lobby);
+      lobby.peers.delete(ws.id);
+      for (const pid of lobby.peers) {
+        const peer = clients.get(pid);
+        if (peer) send(peer, { type: "disconnect", id: ws.id });
+      }
+      if (lobby.peers.size === 0) lobbies.delete(ws.lobby);
+    }
+  });
+});
+
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`local netlib signaling ws://0.0.0.0:${PORT}/v0/signaling`);
+});
