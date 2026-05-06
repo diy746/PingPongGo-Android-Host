@@ -61,3 +61,4 @@ Recommended placement: after local Poki/offline shim, before or after `app.js` d
 ## Status
 
 This is a starter/test skeleton. The WebSocket signaling relay is intentionally minimal and may need adjustment to match the exact current `netlib` protocol after browser console testing.
+# PingPongGo-Android-Host
