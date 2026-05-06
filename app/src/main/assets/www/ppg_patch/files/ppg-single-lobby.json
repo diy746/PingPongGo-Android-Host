@@ -1,6 +1,0 @@
-{
-  "maxPlayers": 2,
-  "lobbyId": "GUEST",
-  "invitePath": "index.html?id=GUEST",
-  "qrTimeoutMs": 180000
-}

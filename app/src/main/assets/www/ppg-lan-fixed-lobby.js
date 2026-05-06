@@ -1,6 +1,10 @@
 (function () {
   console.log("[PPG LAN] patch active");
 
+  function fixedGuestUrl() {
+    return "http://" + location.host + "/index.html?id=GUEST";
+  }
+
   function patch() {
     if (!window.netLib) {
       setTimeout(patch, 200);
@@ -11,14 +15,18 @@
     if (nl.__ppgLanPatched) return;
     nl.__ppgLanPatched = true;
 
-    Object.defineProperty(nl, "shareURL", {
-      get: function () {
-        return "http://" + location.host + "/index.html?id=GUEST";
-      },
-      set: function () {}
-    });
-
-    console.log("[PPG LAN] invite URL ready");
+    try {
+      Object.defineProperty(nl, "shareURL", {
+        configurable: true,
+        get: function () {
+          return fixedGuestUrl();
+        },
+        set: function () {}
+      });
+      console.log("[PPG LAN] invite URL ready");
+    } catch (e) {
+      console.warn("[PPG LAN] shareURL patch failed", e);
+    }
 
     nl.createLobby = function () {
       this.lobbyCode = "GUEST";
