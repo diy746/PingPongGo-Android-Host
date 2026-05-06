@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK - Diagnostic
 
 on:
   push:
@@ -8,11 +8,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: Show repository tree
+        run: |
+          pwd
+          find . -maxdepth 4 -type f | sort | head -300
+
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -21,11 +27,44 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+      - name: Check Gradle files
+        run: |
+          ls -lah
+          ls -lah app || true
+          test -f settings.gradle.kts
+          test -f build.gradle.kts
+          test -f app/build.gradle.kts
+          test -f app/src/main/AndroidManifest.xml
+          test -d app/src/main/assets/www
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew || true
+
+      - name: Build debug APK with full logs
+        run: |
+          ./gradlew assembleDebug \
+            --stacktrace \
+            --info \
+            --warning-mode all
+
+      - name: List APK outputs
+        if: always()
+        run: |
+          find app/build -type f | sort | tail -200 || true
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: PingPongGo-Host-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+
+      - name: Upload build reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-failure-reports
+          path: |
+            app/build/reports/**
+            app/build/outputs/**
+            **/*.log
