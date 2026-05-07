@@ -111,12 +111,39 @@
     var id = new URLSearchParams(location.search).get("id");
     if (id === FIXED_CODE) {
       nl.lobbyCode = FIXED_CODE;
-      console.log("[PPG LAN] guest URL detected, original game will join GUEST");
+      console.log("[PPG LAN] guest URL detected, accepting invitation");
     } else {
       nl.lobbyCode = FIXED_CODE;
-      console.log("[PPG LAN] host mode ready, waiting for Invite button/createLobby");
+      console.log("[PPG LAN] host mode ready, Android app QR is invitation source");
     }
   }
 
+  function notifyAndroidWhenConnected() {
+    if (!window.netLib) {
+      setTimeout(notifyAndroidWhenConnected, 500);
+      return;
+    }
+
+    var notified = false;
+
+    setInterval(function () {
+      if (notified) return;
+
+      if (window.netLib && window.netLib.connectState === 2) {
+        notified = true;
+        console.log("[PPG LAN] WebRTC connected, notifying Android foreground service");
+
+        try {
+          fetch("/__connected?ts=" + Date.now()).catch(function () {});
+        } catch (e) {}
+
+        try {
+          window.dispatchEvent(new Event("ppg-lan-connected"));
+        } catch (e) {}
+      }
+    }, 1000);
+  }
+
   patch();
+  notifyAndroidWhenConnected();
 })();
