@@ -6,9 +6,18 @@ import java.io.IOException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * PingPongGo LAN signaling server.
+ *
+ * SMART RULE:
+ * - Signaling is BOOTSTRAP ONLY.
+ * - Before WebRTC is established: be permissive and connect host/guest as soon as possible.
+ * - After WebRTC is established: do not let stale signaling socket closes kill the game.
+ * - A match ends through browser lifecycle message /__match-ended, then this server resets to IDLE.
+ */
 class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
 
-    private enum class Phase { IDLE, INVITING, HANDSHAKING, PLAYING }
+    enum class Phase { IDLE, INVITING, HANDSHAKING, PLAYING }
 
     private val clients = ConcurrentHashMap<String, WebSocket>()
     private val socketIds = ConcurrentHashMap<WebSocket, String>()
@@ -16,15 +25,35 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
     @Volatile private var phase: Phase = Phase.IDLE
     @Volatile private var hostId: String? = null
     @Volatile private var guestId: String? = null
-    @Volatile private var session: Long = System.currentTimeMillis()
+
+    companion object {
+        @Volatile private var active: SignalingWsServer? = null
+
+        fun markPlaying() {
+            active?.markPlayingInternal()
+        }
+
+        fun resetSession() {
+            active?.resetSessionInternal("external-reset")
+        }
+
+        fun status(): String {
+            return active?.statusJson() ?: "{\"phase\":\"STOPPED\"}"
+        }
+    }
+
+    init {
+        active = this
+    }
 
     override fun openWebSocket(handshake: NanoHTTPD.IHTTPSession): WebSocket {
         return object : WebSocket(handshake) {
+
             override fun onOpen() {
                 val id = "p" + UUID.randomUUID().toString().replace("-", "").take(8)
                 socketIds[this] = id
                 clients[id] = this
-                log("OPEN $id phase=$phase session=$session")
+                log("OPEN $id phase=$phase")
             }
 
             override fun onMessage(message: WebSocketFrame) {
@@ -32,42 +61,91 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
                 val selfId = socketIds[this] ?: return
                 val type = extract(text, "type") ?: return
 
-                log("IN $selfId type=$type phase=$phase $text")
+                log("IN $selfId $type $text")
 
                 when (type) {
                     "hello" -> {
-                        sendJson(this, """{"type":"welcome","id":"$selfId","peerId":"$selfId","secret":"s$selfId","session":$session}""")
-                        sendJson(this, """{"type":"credentials","id":"$selfId","peerId":"$selfId","session":$session}""")
+                        // Netlib expects welcome/credentials style messages. Send both.
+                        sendJson(this, """{"type":"welcome","id":"$selfId","peerId":"$selfId","secret":"s$selfId"}""")
+                        sendJson(this, """{"type":"credentials","id":"$selfId","peerId":"$selfId"}""")
                     }
 
                     "credentials" -> {
-                        sendJson(this, """{"type":"credentials","id":"$selfId","peerId":"$selfId","session":$session}""")
+                        sendJson(this, """{"type":"credentials","id":"$selfId","peerId":"$selfId"}""")
                     }
 
-                    "ping" -> sendJson(this, """{"type":"ping","session":$session}""")
-                    "pong" -> sendJson(this, """{"type":"pong","session":$session}""")
+                    "ping" -> sendJson(this, """{"type":"ping"}""")
+                    "pong" -> sendJson(this, """{"type":"pong"}""")
 
-                    "create" -> handleCreate(this, selfId)
-                    "join" -> handleJoin(this, selfId)
+                    "create" -> {
+                        // Be permissive: any new create starts/restarts the invitation unless already playing.
+                        if (phase != Phase.PLAYING || hostId == null || hostId == selfId) {
+                            hostId = selfId
+                            guestId = null
+                            phase = Phase.INVITING
+                        }
+
+                        val info = lobbyInfo()
+                        sendJson(this, """{"type":"joined","code":"GUEST","lobbyInfo":$info}""")
+                        sendJson(this, """{"type":"lobby","code":"GUEST","lobbyInfo":$info}""")
+                        sendJson(this, """{"type":"lobbyUpdated","lobbyInfo":$info}""")
+
+                        log("INVITE READY host=$hostId lobby=GUEST phase=$phase")
+
+                        // If guest was already waiting, connect immediately.
+                        maybeConnectPeers("create")
+                    }
+
+                    "join" -> {
+                        // Fixed single lobby. A refreshed guest replaces stale guest while not PLAYING.
+                        val h = hostId
+                        if (h == null || clients[h] == null) {
+                            guestId = selfId
+                            phase = Phase.INVITING
+                            sendJson(this, """{"type":"joined","code":"GUEST","lobbyInfo":${lobbyInfo()}}""")
+                            sendJson(this, """{"type":"lobbyUpdated","lobbyInfo":${lobbyInfo()}}""")
+                            log("GUEST WAITING $selfId, no host yet")
+                            return
+                        }
+
+                        if (selfId == h) {
+                            // Do not let the same socket be both sides.
+                            sendJson(this, """{"type":"error","code":"self-join","reason":"Host cannot join itself"}""")
+                            log("REFUSED self join $selfId")
+                            return
+                        }
+
+                        if (phase != Phase.PLAYING || guestId == null || guestId == selfId) {
+                            guestId = selfId
+                            phase = Phase.HANDSHAKING
+                        }
+
+                        val info = lobbyInfo()
+                        sendJson(this, """{"type":"joined","code":"GUEST","lobbyInfo":$info}""")
+                        broadcast("""{"type":"lobbyUpdated","lobbyInfo":$info}""")
+
+                        maybeConnectPeers("join")
+                    }
+
+                    "leave" -> {
+                        if (selfId == hostId) hostId = null
+                        if (selfId == guestId) guestId = null
+                        if (hostId == null && guestId == null) phase = Phase.IDLE
+                        broadcast("""{"type":"lobbyUpdated","lobbyInfo":${lobbyInfo()}}""")
+                    }
 
                     "connected" -> {
-                        // Some netlib builds send this after DataChannel establishment.
-                        relayToOther(selfId, text)
-                        markPlaying("ws-connected-from-$selfId")
-                    }
-
-                    "leave", "ppgQuit", "match-ended" -> {
-                        relayToOther(selfId, text)
-                        resetSession("leave/$type from $selfId")
+                        markPlayingInternal()
+                        relayToOtherOrRecipient(selfId, text, type)
                     }
 
                     "description", "candidate", "event" -> {
-                        relayByRecipientOrOther(selfId, text)
+                        relayToOtherOrRecipient(selfId, text, type)
                     }
 
                     else -> {
-                        // Be generous: the signaling server is only a bootstrap relay.
-                        relayByRecipientOrOther(selfId, text)
+                        // Be forgiving: unknown netlib messages relay to the peer.
+                        relayToOtherOrRecipient(selfId, text, type)
                     }
                 }
             }
@@ -75,122 +153,72 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
             override fun onClose(code: WebSocketFrame.CloseCode?, reason: String?, initiatedByRemote: Boolean) {
                 val id = socketIds.remove(this) ?: return
                 clients.remove(id)
+
                 log("CLOSE $id phase=$phase reason=$reason")
 
-                // During PLAYING, WebRTC/DataChannel owns the match. A stale signaling close must not kill the game.
-                if (phase == Phase.PLAYING) return
-
-                if (id == hostId || id == guestId) {
-                    resetSession("bootstrap socket closed: $id")
+                if (phase == Phase.PLAYING) {
+                    // Signaling socket closing after WebRTC is established is not proof the match ended.
+                    // Browser heartbeat/ppgTableQuit decides real abandon/quit.
+                    if (id == hostId) hostId = null
+                    if (id == guestId) guestId = null
+                    return
                 }
+
+                if (id == hostId) hostId = null
+                if (id == guestId) guestId = null
+                if (hostId == null && guestId == null) phase = Phase.IDLE
+
+                broadcast("""{"type":"disconnect","id":"$id"}""")
+                broadcast("""{"type":"lobbyUpdated","lobbyInfo":${lobbyInfo()}}""")
             }
 
             override fun onPong(pong: WebSocketFrame) {}
-
-            override fun onException(exception: IOException) {
-                log("WS EXCEPTION ${exception.message}")
-            }
+            override fun onException(exception: IOException) { log("WS EXCEPTION ${exception.message}") }
         }
     }
 
-    @Synchronized
-    private fun handleCreate(ws: WebSocket, selfId: String) {
-        if (phase == Phase.PLAYING) {
-            sendJson(ws, """{"type":"error","code":"match-in-progress","reason":"A match is already playing"}""")
-            log("REFUSE create from $selfId because phase=PLAYING")
-            return
-        }
-
-        hostId = selfId
-        guestId = null
-        phase = Phase.INVITING
-        session = System.currentTimeMillis()
-
-        val info = lobbyInfo()
-        sendJson(ws, """{"type":"joined","code":"GUEST","lobbyInfo":$info,"session":$session}""")
-        sendJson(ws, """{"type":"lobby","code":"GUEST","lobbyInfo":$info,"session":$session}""")
-        log("INVITE READY host=$selfId code=GUEST session=$session")
-    }
-
-    @Synchronized
-    private fun handleJoin(ws: WebSocket, selfId: String) {
-        if (phase == Phase.PLAYING) {
-            sendJson(ws, """{"type":"error","code":"match-in-progress","reason":"A match is already playing"}""")
-            log("REFUSE join from $selfId because phase=PLAYING")
-            return
-        }
-
+    private fun maybeConnectPeers(source: String) {
         val h = hostId
-        if (h == null) {
-            sendJson(ws, """{"type":"error","code":"host-not-ready","reason":"No active invitation"}""")
-            log("REFUSE join from $selfId because no host")
+        val g = guestId
+        val host = if (h != null) clients[h] else null
+        val guest = if (g != null) clients[g] else null
+
+        if (h == null || g == null || host == null || guest == null || h == g) {
+            log("CONNECT WAIT source=$source host=$h guest=$g phase=$phase")
             return
         }
 
-        if (selfId == h) {
-            sendJson(ws, """{"type":"error","code":"host-cannot-join","reason":"Host cannot join itself"}""")
-            log("REFUSE join from host socket $selfId")
-            return
-        }
-
-        guestId = selfId
         phase = Phase.HANDSHAKING
-
-        val host = clients[h]
-        if (host == null) {
-            resetSession("host socket missing before handshake")
-            sendJson(ws, """{"type":"error","code":"host-not-ready","reason":"Host socket missing"}""")
-            return
-        }
-
         val info = lobbyInfo()
-        sendJson(ws, """{"type":"joined","code":"GUEST","lobbyInfo":$info,"session":$session}""")
-        sendJson(host, """{"type":"lobbyUpdated","lobbyInfo":$info,"session":$session}""")
-        sendJson(ws, """{"type":"lobbyUpdated","lobbyInfo":$info,"session":$session}""")
 
-        // The only purpose of signaling: tell both peers to start the WebRTC handshake.
-        sendJson(host, """{"type":"connect","id":"$selfId","polite":false,"session":$session}""")
-        sendJson(ws, """{"type":"connect","id":"$h","polite":true,"session":$session}""")
+        // This mirrors the working Node server pattern: send connect to both sides immediately.
+        sendJson(host, """{"type":"connect","id":"$g","polite":false,"lobbyInfo":$info}""")
+        sendJson(guest, """{"type":"connect","id":"$h","polite":true,"lobbyInfo":$info}""")
+        sendJson(host, """{"type":"lobbyUpdated","lobbyInfo":$info}""")
+        sendJson(guest, """{"type":"lobbyUpdated","lobbyInfo":$info}""")
 
-        log("HANDSHAKE START host=$h guest=$selfId session=$session")
+        log("AUTO ACCEPT source=$source host=$h guest=$g phase=$phase")
     }
 
-    @Synchronized
-    fun markPlaying(reason: String = "connected") {
-        if (phase != Phase.PLAYING) {
-            phase = Phase.PLAYING
-            log("PLAYING: $reason host=$hostId guest=$guestId session=$session")
-        }
-    }
-
-    @Synchronized
-    fun resetSession(reason: String = "manual reset") {
-        val oldHost = hostId
-        val oldGuest = guestId
-        hostId = null
-        guestId = null
-        phase = Phase.IDLE
-        session = System.currentTimeMillis()
-        log("RESET SESSION: $reason oldHost=$oldHost oldGuest=$oldGuest newSession=$session")
-    }
-
-    private fun relayByRecipientOrOther(selfId: String, text: String) {
-        val target = extract(text, "recipient")
+    private fun relayToOtherOrRecipient(selfId: String, text: String, type: String) {
+        val targetId = extract(text, "recipient")
             ?: extract(text, "receiverId")
-            ?: extract(text, "to")
+            ?: extract(text, "target")
             ?: otherPeer(selfId)
 
-        if (target != null) {
-            clients[target]?.let { sendJson(it, text) }
-            log("RELAY $selfId -> $target")
-        } else {
-            log("NO TARGET for relay from $selfId")
+        if (targetId == null) {
+            log("RELAY DROP $type from=$selfId no target")
+            return
         }
-    }
 
-    private fun relayToOther(selfId: String, text: String) {
-        val target = otherPeer(selfId)
-        if (target != null) clients[target]?.let { sendJson(it, text) }
+        val target = clients[targetId]
+        if (target == null) {
+            log("RELAY MISS $type from=$selfId to=$targetId")
+            return
+        }
+
+        sendJson(target, text)
+        log("RELAY $type $selfId -> $targetId")
     }
 
     private fun otherPeer(id: String): String? = when (id) {
@@ -199,10 +227,31 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
         else -> null
     }
 
+    private fun markPlayingInternal() {
+        if (phase != Phase.PLAYING) {
+            phase = Phase.PLAYING
+            log("PHASE PLAYING: signaling bootstrap complete")
+        }
+    }
+
+    private fun resetSessionInternal(reason: String) {
+        log("RESET SESSION reason=$reason host=$hostId guest=$guestId phase=$phase")
+        hostId = null
+        guestId = null
+        phase = Phase.IDLE
+        broadcast("""{"type":"lobbyUpdated","lobbyInfo":${lobbyInfo()}}""")
+    }
+
     private fun lobbyInfo(): String {
         val players = listOfNotNull(hostId, guestId).joinToString(",") { "\"$it\"" }
         val leader = hostId ?: ""
         return """{"code":"GUEST","leader":"$leader","term":1,"players":[$players],"maxPlayers":2,"phase":"$phase"}"""
+    }
+
+    private fun statusJson(): String = lobbyInfo()
+
+    private fun broadcast(text: String) {
+        clients.values.forEach { sendJson(it, text) }
     }
 
     private fun sendJson(ws: WebSocket, text: String) {
@@ -215,7 +264,7 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
     }
 
     private fun extract(json: String, key: String): String? {
-        val pattern = """"$key"\s*:\s*"([^"]+)"""".toRegex()
+        val pattern = Regex("\\\"$key\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"")
         return pattern.find(json)?.groupValues?.getOrNull(1)
     }
 

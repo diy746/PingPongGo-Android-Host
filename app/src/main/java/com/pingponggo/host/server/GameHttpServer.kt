@@ -10,23 +10,28 @@ import java.util.zip.ZipOutputStream
 class GameHttpServer(
     private val context: Context,
     port: Int,
-    private val onWebRtcConnected: () -> Unit = {},
-    private val onMatchEnded: () -> Unit = {}
+    private val onWebRtcConnected: () -> Unit = {}
 ) : NanoHTTPD("0.0.0.0", port) {
 
     override fun serve(session: IHTTPSession): Response {
         val uri = session.uri.trimStart('/')
+
         return try {
             when {
                 uri == "" -> serveAsset("index.html")
-                uri == "__health" -> html("OK: PingPongGo HTTP server is running")
+                uri == "__health" -> html("OK: PingPongGo HTTP server is running\nSignaling: ${SignalingWsServer.status()}")
                 uri.startsWith("__connected") -> {
+                    SignalingWsServer.markPlaying()
                     onWebRtcConnected()
-                    html("OK: WebRTC established; signaling session marked PLAYING")
+                    html("OK: WebRTC established. Signaling bootstrap phase completed. Server remains alive.")
                 }
-                uri.startsWith("__match-ended") || uri.startsWith("__reset-session") -> {
-                    onMatchEnded()
-                    html("OK: match ended; signaling session reset to IDLE")
+                uri.startsWith("__match-ended") -> {
+                    SignalingWsServer.resetSession()
+                    html("OK: match ended. Signaling session reset to IDLE for next invitation.")
+                }
+                uri.startsWith("__reset") -> {
+                    SignalingWsServer.resetSession()
+                    html("OK: signaling session reset manually.")
                 }
                 uri == "ppg-test.html" -> html(testPage())
                 uri == "download/PingPongGo-LAN.zip" -> serveZip()
@@ -41,11 +46,9 @@ class GameHttpServer(
         }
     }
 
-    private fun html(body: String): Response = newFixedLengthResponse(
-        Response.Status.OK,
-        "text/html; charset=utf-8",
-        body
-    )
+    private fun html(body: String): Response {
+        return newFixedLengthResponse(Response.Status.OK, "text/html; charset=utf-8", body)
+    }
 
     private fun testPage(): String = """
         <!doctype html>
@@ -59,9 +62,8 @@ class GameHttpServer(
           <h2>PingPongGo LAN Host Helper Test</h2>
           <p><b>HTTP server works.</b></p>
           <ul>
-            <li><a href="/__health">Health check</a></li>
-            <li><a href="/__connected">Mark WebRTC connected / PLAYING</a></li>
-            <li><a href="/__match-ended">Reset signaling session / match ended</a></li>
+            <li><a href="/__health">Health + signaling status</a></li>
+            <li><a href="/__reset">Reset signaling invitation/session</a></li>
             <li><a href="/index.html?role=HOST">Open HOST game</a></li>
             <li><a href="/index.html?role=GUEST&id=GUEST">Open GUEST game</a></li>
             <li><a href="/download/PingPongGo-LAN.zip">Download ZIP package</a></li>

@@ -1,20 +1,21 @@
 (function () {
   "use strict";
 
-  console.log("[PPG TABLE] lifecycle wrapper loading");
+  console.log("[PPG TABLE] lifecycle patch loading");
 
   var FIXED_CODE = "GUEST";
   var JOIN_TIMEOUT_MS = 120000;
   var HEARTBEAT_MS = 2000;
   var PEER_ABANDONED_MS = 45000;
-  var QUIT_REPEAT = 10;
-  var QUIT_SPACING_MS = 80;
-  var CLOSE_AFTER_QUIT_MS = 1200;
+  var QUIT_REPEAT = 8;
+  var QUIT_INTERVAL_MS = 80;
+  var CLOSE_AFTER_QUIT_MS = 900;
 
   var params = new URLSearchParams(location.search);
   var id = params.get("id");
   var role = (params.get("role") || "").toUpperCase();
 
+  // Forgiving defaults to make connection easy while testing.
   if (!role && id === FIXED_CODE) role = "GUEST";
   if (!role && !id) role = "HOST";
 
@@ -26,44 +27,30 @@
   window.__ppgTableEstablished = false;
   window.__ppgTableLocalQuit = false;
   window.__ppgTableRemoteQuit = false;
-  window.__ppgTableExiting = false;
+  window.__ppgTableLastPeerAlive = Date.now();
   window.__ppgLanDisableDemo = true;
-  window.__ppgLastPeerAlive = Date.now();
-
-  var originalNetworkMessage = null;
 
   function log() { console.log.apply(console, ["[PPG TABLE]"].concat([].slice.call(arguments))); }
   function warn() { console.warn.apply(console, ["[PPG TABLE]"].concat([].slice.call(arguments))); }
 
-  function guestInviteUrl() {
+  function inviteUrl() {
     return "http://" + location.host + "/index.html?role=GUEST&id=" + FIXED_CODE;
   }
 
-  function serverConnected() {
-    try { fetch("/__connected?ts=" + Date.now()).catch(function () {}); } catch (e) {}
-  }
-
-  function serverMatchEnded(reason) {
-    try { fetch("/__match-ended?reason=" + encodeURIComponent(reason || "unknown") + "&ts=" + Date.now()).catch(function () {}); } catch (e) {}
-  }
-
-  function safeSendReliable(type, args) {
+  function sendReliable(type, args) {
     try {
       if (window.netLib && window.netLib.peer) {
         window.netLib.send(true, type, args || []);
         return true;
       }
-    } catch (e) {
-      warn("send failed", type, e);
-    }
+    } catch (e) { warn("sendReliable failed", type, e); }
     return false;
   }
 
   function markEstablished(reason) {
     if (window.__ppgTableEstablished) return;
-
     window.__ppgTableEstablished = true;
-    window.__ppgLastPeerAlive = Date.now();
+    window.__ppgTableLastPeerAlive = Date.now();
 
     if (window.netLib) {
       window.netLib.connectState = 2;
@@ -71,39 +58,42 @@
       try { clearTimeout(window.netLib.joinTimer); } catch (e) {}
     }
 
-    log("TABLE ESTABLISHED by", reason, "- signaling is now bootstrap-only");
-    serverConnected();
+    log("TABLE ESTABLISHED by", reason, "— signaling is now disposable");
 
+    try { fetch("/__connected?ts=" + Date.now()).catch(function () {}); } catch (e) {}
     try { window.dispatchEvent(new Event("ppg-lan-connected")); } catch (e) {}
   }
 
+  function resetSignalingSession(reason) {
+    try { fetch("/__match-ended?reason=" + encodeURIComponent(reason) + "&ts=" + Date.now()).catch(function () {}); } catch (e) {}
+  }
+
   function returnToFirstScreen(reason) {
-    if (window.__ppgTableExiting) return;
-    window.__ppgTableExiting = true;
+    if (window.__ppgTableReturning) return;
+    window.__ppgTableReturning = true;
 
-    warn("ending multiplayer table:", reason);
-    serverMatchEnded(reason);
+    warn("returning to first screen:", reason);
 
-    if (window.netLib) {
-      try { window.netLib.connectState = 0; } catch (e) {}
-      try { window.netLib.lobbyCode = ""; } catch (e) {}
-      try { window.netLib.playerNum = -1; } catch (e) {}
-    }
-
-    // Prefer the original game disconnect flow, because it knows how to leave PVP screens.
-    try {
-      if (originalNetworkMessage) {
-        originalNetworkMessage("disconnected");
-        return;
-      }
-    } catch (e) {
-      warn("original disconnected flow failed", e);
-    }
-
-    // Fallback to first screen.
     try { if (typeof window.removeAllButs === "function") window.removeAllButs(); } catch (e) {}
     try { window.gameVariation = 0; } catch (e) {}
+    try { window.gameplayState = 0; } catch (e) {}
     try { if (typeof window.initStartScreen === "function") window.initStartScreen(); } catch (e) {}
+
+    try {
+      if (window.panel && typeof window.panel.showDisconnect === "function") {
+        window.panel.showDisconnect(reason === "remote-quit" ? "disconnected" : "unableToConnect");
+      }
+    } catch (e) {}
+
+    resetSignalingSession(reason);
+  }
+
+  function notifyPeerQuit() {
+    window.__ppgTableLocalQuit = true;
+    for (var i = 0; i < QUIT_REPEAT; i++) {
+      setTimeout(function () { sendReliable("ppgTableQuit", [Date.now()]); }, i * QUIT_INTERVAL_MS);
+    }
+    resetSignalingSession("local-quit");
   }
 
   function patchNetworkMessage() {
@@ -111,60 +101,54 @@
       setTimeout(patchNetworkMessage, 100);
       return;
     }
-    if (window.networkMessage.__ppgTableLifecyclePatched) return;
+    if (window.networkMessage.__ppgTablePatched) return;
 
-    originalNetworkMessage = window.networkMessage;
+    var original = window.networkMessage;
 
     window.networkMessage = function (message) {
       var head = "";
       try { head = String(message || "").split(",")[0]; } catch (e) {}
 
-      // Lifecycle-only messages, never pass to original switch.
-      if (head === "ppgAlive") {
-        window.__ppgLastPeerAlive = Date.now();
+      if (head === "ppgTableAlive") {
+        window.__ppgTableLastPeerAlive = Date.now();
         if (!window.__ppgTableEstablished && window.netLib && window.netLib.connectState === 2) {
-          markEstablished("ppgAlive");
+          markEstablished("ppgTableAlive");
         }
         return;
       }
 
-      if (head === "ppgTableQuit" || head === "ppgQuit") {
+      if (head === "ppgTableQuit") {
         window.__ppgTableRemoteQuit = true;
-        window.__ppgLastPeerAlive = Date.now();
-        warn("opponent quit/abandoned table");
+        window.__ppgTableLastPeerAlive = Date.now();
+        warn("peer quit/abandoned table via explicit quit message");
+        try { if (window.netLib && window.netLib.network) window.netLib.network.close(); } catch (e) {}
         returnToFirstScreen("remote-quit");
         return;
       }
 
-      if (head === "peerConnect" || head === "acceptPlayer") markEstablished(head);
-
-      if (
-        head === "opData" || head === "batPos" || head === "serveBounce" ||
-        head === "hitBounce" || head === "offSide" || head === "rematch"
-      ) {
-        window.__ppgLastPeerAlive = Date.now();
+      if (head === "peerConnect" || head === "acceptPlayer") {
+        markEstablished(head);
       }
 
-      // Once the table is shared, signaling noise must not kill the table.
+      if (head === "opData" || head === "batPos" || head === "serveBounce" || head === "hitBounce" || head === "offSide" || head === "rematch") {
+        window.__ppgTableLastPeerAlive = Date.now();
+      }
+
       if (window.__ppgTableEstablished && !window.__ppgTableLocalQuit && !window.__ppgTableRemoteQuit) {
-        if (
-          head === "connectError" || head === "generalError" ||
-          head === "lobby-not-found" || head === "lobby-is-full" || head === "latency"
-        ) {
-          warn("ignored bootstrap error after table established:", head);
+        if (head === "connectError" || head === "generalError" || head === "lobby-not-found" || head === "lobby-is-full" || head === "latency") {
+          warn("ignored post-establish bootstrap error:", head);
           return;
         }
-
         if (head === "disconnected") {
-          warn("generic disconnected ignored; heartbeat/quit controls real table end");
+          warn("ignored generic disconnected after table established; heartbeat decides real abandon");
           return;
         }
       }
 
-      return originalNetworkMessage.apply(this, arguments);
+      return original.apply(this, arguments);
     };
 
-    window.networkMessage.__ppgTableLifecyclePatched = true;
+    window.networkMessage.__ppgTablePatched = true;
     log("networkMessage patched");
   }
 
@@ -174,144 +158,56 @@
       return;
     }
     var nl = window.netLib;
-    if (nl.__ppgTableLifecyclePatched) return;
-    nl.__ppgTableLifecyclePatched = true;
+    if (nl.__ppgTablePatched) return;
+    nl.__ppgTablePatched = true;
 
     log("netLib found role=", role);
 
     try {
-      Object.defineProperty(nl, "shareURL", {
-        configurable: true,
-        get: function () { return guestInviteUrl(); },
-        set: function () {}
-      });
-      log("invite URL ready", guestInviteUrl());
-    } catch (e) { nl.shareURL = guestInviteUrl(); }
+      Object.defineProperty(nl, "shareURL", { configurable: true, get: inviteUrl, set: function () {} });
+      log("invite URL ready", inviteUrl());
+    } catch (e) { nl.shareURL = inviteUrl(); }
 
-    nl.createNetwork = function () {
-      var self = this;
-      this.network = new window.netlib.Network(this.gameId);
-
-      this.network.on("message", function (a, b, payload) {
-        if (typeof window.networkMessage === "function") window.networkMessage(payload);
-      });
-
-      this.network.on("connected", function (peer) {
-        log("peer connected", peer && peer.id);
-        self.peer = peer;
-        self.connectState = 2;
-        self.lobbyCode = FIXED_CODE;
-        clearTimeout(self.joinTimer);
-        markEstablished("netlib-connected");
-        if (self.playerNum === 1) self.send(true, "peerConnect");
-      });
-
-      this.network.on("disconnected", function (event) {
-        warn("netlib disconnected event", event);
-        if (window.__ppgTableLocalQuit || window.__ppgTableRemoteQuit) return;
-        if (window.__ppgTableEstablished) {
-          self.connectState = 2;
-          self.lobbyCode = FIXED_CODE;
-          warn("stale signaling disconnect ignored after table established");
-          return;
-        }
-        clearTimeout(self.joinTimer);
-        self.connectState = 0;
-        self.lobbyCode = "";
-        if (typeof window.networkMessage === "function") window.networkMessage("disconnected");
-      });
-
-      this.network.on("lobby", function (code) {
-        if (self.playerNum === 0) {
-          log("lobby created", code, "forcing", FIXED_CODE);
-          self.lobbyCode = FIXED_CODE;
-          try { if (typeof window.addUrlBut === "function") window.addUrlBut(); } catch (e) {}
-        }
-      });
-
-      this.network.on("ready", function () {
-        log("network ready");
-        self.networkReady = true;
-        if (self.actionOnCoonect === "createLobby") self.createLobby();
-        else if (self.actionOnCoonect === "joinLobby") self.joinLobby();
-      });
-
-      function handleFatalBootstrapError(name, err) {
-        warn(name, err);
-        if (window.__ppgTableEstablished && !window.__ppgTableLocalQuit && !window.__ppgTableRemoteQuit) {
-          self.connectState = 2;
-          self.lobbyCode = FIXED_CODE;
-          warn("ignored", name, "after table established");
-          return;
-        }
-        clearTimeout(self.joinTimer);
-        self.connectState = 0;
-        self.lobbyCode = FIXED_CODE;
-        if (typeof window.networkMessage === "function" && name === "signalingerror") {
-          if (err && (err.code === "lobby-not-found" || err.code === "lobby-is-full")) window.networkMessage(err.code);
-          else window.networkMessage("generalError");
-        }
-      }
-
-      this.network.on("signalingerror", function (err) { handleFatalBootstrapError("signalingerror", err); });
-      this.network.on("error", function (err) { handleFatalBootstrapError("error", err); });
-      this.network.on("rtcerror", function (err) { handleFatalBootstrapError("rtcerror", err); });
-    };
-
+    var originalConnect = nl.connect;
     nl.connect = function (action) {
       action = action || "";
+
       if (window.__ppgTableEstablished && !window.__ppgTableLocalQuit && !window.__ppgTableRemoteQuit) {
         log("connect ignored; table already established", action);
         return;
       }
-      if (action === "createLobby" && !IS_HOST) { warn("blocked createLobby: not HOST"); return; }
-      if (action === "joinLobby" && !IS_GUEST) { warn("blocked joinLobby: not GUEST"); return; }
-      if (this.__ppgTableConnecting && this.__ppgTableLastAction === action) { log("duplicate connect ignored", action); return; }
 
-      this.__ppgTableConnecting = true;
-      this.__ppgTableLastAction = action;
-      this.actionOnCoonect = action;
-      this.lobbyCode = FIXED_CODE;
-      if (this.network && !window.__ppgTableEstablished) { try { this.network.close(); } catch (e) {} }
-      this.createNetwork();
-    };
+      if (action === "createLobby" && !IS_HOST) { warn("blocked createLobby: not host tab"); return; }
+      if (action === "joinLobby" && !IS_GUEST) { warn("blocked joinLobby: not guest tab"); return; }
 
-    // Existing Pause (II) -> Quit game (X) calls netLib.disconnect() in multiplayer.
-    nl.disconnect = function () {
-      window.__ppgTableLocalQuit = true;
-      log("local player quit table; notifying opponent and resetting session");
-
-      for (var i = 0; i < QUIT_REPEAT; i++) {
-        setTimeout(function () { safeSendReliable("ppgTableQuit", [Date.now()]); }, i * QUIT_SPACING_MS);
+      var now = Date.now();
+      if (this.__ppgTableLastConnectAction === action && now - (this.__ppgTableLastConnectAt || 0) < 2500) {
+        log("duplicate connect ignored", action);
+        return;
       }
-      serverMatchEnded("local-quit");
+      this.__ppgTableLastConnectAction = action;
+      this.__ppgTableLastConnectAt = now;
+      this.lobbyCode = FIXED_CODE;
 
-      var self = this;
-      setTimeout(function () {
-        try { if (self.network) self.network.close(); } catch (e) {}
-        self.lobbyCode = "";
-        self.playerNum = -1;
-        self.connectState = 0;
-        window.__ppgTableEstablished = false;
-      }, CLOSE_AFTER_QUIT_MS);
+      return originalConnect.call(this, action);
     };
 
     nl.createLobby = function () {
-      if (!IS_HOST) { warn("createLobby refused: not HOST"); return; }
-      if (this.__ppgTableCreateStarted) { log("duplicate createLobby ignored"); return; }
+      if (!IS_HOST) { warn("createLobby refused: not host tab"); return; }
+      if (this.__ppgTableCreateStarted) { log("duplicate create ignored"); return; }
       this.__ppgTableCreateStarted = true;
       this.playerNum = 0;
       this.lobbyCode = FIXED_CODE;
       this.connectState = 1;
-      log("host inviting fixed lobby GUEST");
+      log("host fixed lobby GUEST");
       this.network.create({ code: FIXED_CODE, codeFormat: "fixed", public: false, maxPlayers: 2 });
       try { if (typeof window.addUrlBut === "function") window.addUrlBut(); } catch (e) {}
     };
 
     nl.joinLobby = function () {
       var self = this;
-      if (!IS_GUEST) { warn("joinLobby refused: not GUEST"); return; }
-      if (this.__ppgTableJoinStarted) { log("duplicate joinLobby ignored"); return; }
+      if (!IS_GUEST) { warn("joinLobby refused: not guest tab"); return; }
+      if (this.__ppgTableJoinStarted) { log("duplicate join ignored"); return; }
       this.__ppgTableJoinStarted = true;
       this.playerNum = 1;
       this.lobbyCode = FIXED_CODE;
@@ -329,6 +225,23 @@
       this.network.join(FIXED_CODE);
     };
 
+    var originalDisconnect = nl.disconnect;
+    nl.disconnect = function () {
+      if (window.__ppgTableEstablished && !window.__ppgTableRemoteQuit) {
+        log("Pause→Quit: notifying peer, then closing local table");
+        notifyPeerQuit();
+        var self = this;
+        setTimeout(function () {
+          try { if (self.network) self.network.close(); } catch (e) {}
+          try { originalDisconnect.call(self); } catch (e) {
+            self.lobbyCode = ""; self.playerNum = -1; self.connectState = 0;
+          }
+        }, CLOSE_AFTER_QUIT_MS);
+        return;
+      }
+      return originalDisconnect.call(this);
+    };
+
     if (IS_HOST) {
       nl.lobbyCode = FIXED_CODE;
       setTimeout(function () { if (!window.__ppgTableEstablished && nl.connectState !== 2) nl.connect("createLobby"); }, 800);
@@ -336,41 +249,37 @@
       nl.lobbyCode = FIXED_CODE;
       setTimeout(function () { if (!window.__ppgTableEstablished && nl.connectState !== 2) nl.connect("joinLobby"); }, 800);
     } else {
-      warn("unknown role; no auto-connect");
+      warn("unknown role; no auto connect");
     }
   }
 
-  function heartbeatLoop() {
+  function heartbeat() {
     setInterval(function () {
       if (!window.netLib || !window.__ppgTableEstablished) return;
       if (window.__ppgTableLocalQuit || window.__ppgTableRemoteQuit) return;
-
       try { window.netLib.connectState = 2; window.netLib.lobbyCode = FIXED_CODE; } catch (e) {}
-      safeSendReliable("ppgAlive", [Date.now()]);
-
-      var silence = Date.now() - (window.__ppgLastPeerAlive || Date.now());
+      sendReliable("ppgTableAlive", [Date.now()]);
+      var silence = Date.now() - (window.__ppgTableLastPeerAlive || Date.now());
       if (silence > PEER_ABANDONED_MS) {
-        warn("peer abandoned; heartbeat silent", silence, "ms");
+        warn("peer abandoned table, silence=", silence);
         window.__ppgTableRemoteQuit = true;
-        returnToFirstScreen("peer-heartbeat-timeout");
+        returnToFirstScreen("peer-abandoned");
       }
     }, HEARTBEAT_MS);
   }
 
-  function pageLeaveHook() {
-    function notifyLeaving() {
+  function pageLeave() {
+    function leave() {
       if (!window.__ppgTableEstablished) return;
       if (window.__ppgTableLocalQuit || window.__ppgTableRemoteQuit) return;
-      window.__ppgTableLocalQuit = true;
-      try { safeSendReliable("ppgTableQuit", [Date.now()]); } catch (e) {}
-      serverMatchEnded("page-leave");
+      notifyPeerQuit();
     }
-    window.addEventListener("pagehide", notifyLeaving);
-    window.addEventListener("beforeunload", notifyLeaving);
+    window.addEventListener("pagehide", leave);
+    window.addEventListener("beforeunload", leave);
   }
 
   patchNetworkMessage();
   patchNetLib();
-  heartbeatLoop();
-  pageLeaveHook();
+  heartbeat();
+  pageLeave();
 })();
