@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Button
@@ -16,19 +17,15 @@ import android.widget.ScrollView
 import android.widget.TextView
 import com.pingponggo.host.network.IpDetector
 import com.pingponggo.host.qr.QrGenerator
-import com.pingponggo.host.server.GameHttpServer
-import com.pingponggo.host.server.SignalingWsServer
-import fi.iki.elonen.NanoHTTPD
 
 class MainActivity : Activity() {
-    private var httpServer: GameHttpServer? = null
-    private var wsServer: SignalingWsServer? = null
-
-    private val httpPort = 8123
-    private val wsPort = 8124
+    private val httpPort = ServerForegroundService.HTTP_PORT
+    private val wsPort = ServerForegroundService.WS_PORT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        startLanServerService()
 
         val ip = IpDetector.detectLanIp() ?: "192.168.43.1"
         val hostUrl = "http://$ip:$httpPort/index.html"
@@ -37,26 +34,15 @@ class MainActivity : Activity() {
         val healthUrl = "http://$ip:$httpPort/__health"
         val zipUrl = "http://$ip:$httpPort/download/PingPongGo-LAN.zip"
 
-        startServers()
-
         setContentView(makeUi(ip, hostUrl, guestUrl, testUrl, healthUrl, zipUrl))
     }
 
-    private fun startServers() {
-        try {
-            httpServer = GameHttpServer(this, httpPort).also {
-                it.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        try {
-            wsServer = SignalingWsServer(wsPort).also {
-                it.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun startLanServerService() {
+        val intent = Intent(this, ServerForegroundService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
         }
     }
 
@@ -90,11 +76,11 @@ class MainActivity : Activity() {
         }
 
         root.addView(text("PingPongGo LAN Host", 24f))
+        root.addView(text("Server runs in foreground service. You may open browser; server should stay alive."))
         root.addView(text("HOST IP: $ip"))
         root.addView(text("HTTP: http://$ip:$httpPort"))
         root.addView(text("WS: ws://$ip:$wsPort/v0/signaling"))
         root.addView(text("Fixed lobby: GUEST"))
-        root.addView(text("Max human peers: 2"))
         root.addView(text("Game slots: always 2 — HOST vs CPU or HOST vs GUEST"))
 
         val qrBitmap: Bitmap = QrGenerator.create(guestUrl, 768)
@@ -115,25 +101,17 @@ class MainActivity : Activity() {
 
         root.addView(button("Open Health Check") { openUrl(healthUrl) })
         root.addView(button("Open Test Page") { openUrl(testUrl) })
-        root.addView(button("Open HOST Game") { openUrl(hostUrl) })
+        root.addView(button("Open HOST Game in Browser") { openUrl(hostUrl) })
 
         root.addView(text("ZIP manual download:"))
         root.addView(text(zipUrl, 14f))
 
-        root.addView(text("Instructions:\n1. Enable hotspot on this phone.\n2. Keep this app open.\n3. Connect guest phone to hotspot.\n4. Scan QR on guest phone."))
+        root.addView(text("Instructions:\n1. Enable hotspot on this phone.\n2. Open this app once to start server.\n3. You may open browser after server starts.\n4. Guest connects to hotspot and scans QR."))
 
-        return ScrollView(this).apply {
-            addView(root)
-        }
+        return ScrollView(this).apply { addView(root) }
     }
 
     private fun openUrl(url: String) {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-    }
-
-    override fun onDestroy() {
-        wsServer?.stop()
-        httpServer?.stop()
-        super.onDestroy()
     }
 }
