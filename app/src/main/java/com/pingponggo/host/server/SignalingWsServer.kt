@@ -1,6 +1,5 @@
 package com.pingponggo.host.server
 
-import android.util.Log
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoWSD
 import java.io.IOException
@@ -8,16 +7,17 @@ import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Brutal fixed-lobby LAN signaling for PingPongGo.
+ * Smart bootstrap-only signaling server for PingPongGo LAN.
  *
- * Design rule:
- * - Table tennis always has two gameplay slots.
- * - Network can only replace CPU opponent with one GUEST human.
- * - First browser that creates/invites is HOST.
- * - Browser with ?id=GUEST joins as GUEST.
- * - As soon as the second peer appears, we send connect to both sides.
- * - Relay description/candidate/event/unknown payloads to the other peer.
- * - No random codes, no online relay, no approval dialog.
+ * Purpose:
+ * - create exactly one fixed lobby: GUEST
+ * - accept the first/active guest immediately
+ * - send connect messages to both peers
+ * - relay SDP/candidates/events while WebRTC is bootstrapping
+ * - after WebRTC is established, do NOT let signaling socket close kill gameplay
+ *
+ * The WebSocket server is only a matchmaker/handshake helper.
+ * Gameplay must continue over WebRTC DataChannel after connection.
  */
 class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
 
@@ -26,6 +26,7 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
 
     @Volatile private var hostId: String? = null
     @Volatile private var guestId: String? = null
+    @Volatile private var webRtcEstablished: Boolean = false
 
     override fun openWebSocket(handshake: NanoHTTPD.IHTTPSession): WebSocket {
         return object : WebSocket(handshake) {
@@ -33,149 +34,150 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
                 val id = "p" + UUID.randomUUID().toString().replace("-", "").take(8)
                 socketIds[this] = id
                 clients[id] = this
-                log("OPEN $id uri=${handshake.uri}")
+                log("OPEN $id")
             }
 
             override fun onMessage(message: WebSocketFrame) {
                 val text = message.textPayload ?: return
                 val selfId = socketIds[this] ?: return
-                handle(this, selfId, text)
+                val type = extract(text, "type") ?: return
+
+                log("IN $selfId $type $text")
+
+                when (type) {
+                    "hello" -> {
+                        sendJson(this, """{"type":"welcome","id":"$selfId","peerId":"$selfId","secret":"s$selfId"}""")
+                        sendJson(this, """{"type":"credentials","id":"$selfId","peerId":"$selfId"}""")
+                    }
+
+                    "credentials" -> {
+                        sendJson(this, """{"type":"credentials","id":"$selfId","peerId":"$selfId"}""")
+                    }
+
+                    "ping" -> sendJson(this, """{"type":"ping"}""")
+                    "pong" -> sendJson(this, """{"type":"pong"}""")
+
+                    "create" -> {
+                        // One active host per server. A refreshed same host may recreate.
+                        val existingHost = hostId
+                        if (existingHost != null && existingHost != selfId && clients.containsKey(existingHost) && !webRtcEstablished) {
+                            sendJson(this, """{"type":"error","code":"host-already-exists","reason":"Host already exists"}""")
+                            log("REFUSED create from $selfId; current host=$existingHost")
+                            return
+                        }
+
+                        hostId = selfId
+                        if (!webRtcEstablished) guestId = null
+
+                        val info = lobbyInfo()
+                        sendJson(this, """{"type":"joined","code":"GUEST","lobbyInfo":$info}""")
+                        sendJson(this, """{"type":"lobby","code":"GUEST","lobbyInfo":$info}""")
+                        sendJson(this, """{"type":"lobbyUpdated","lobbyInfo":$info}""")
+                        log("HOST READY $selfId lobby=GUEST")
+                    }
+
+                    "join" -> {
+                        if (selfId == hostId) {
+                            sendJson(this, """{"type":"error","code":"host-cannot-join","reason":"Host cannot join as guest"}""")
+                            log("REFUSED host joining itself $selfId")
+                            return
+                        }
+
+                        val h = hostId
+                        if (h == null || !clients.containsKey(h)) {
+                            // Guest can wait, but cannot become host through join.
+                            guestId = selfId
+                            sendJson(this, """{"type":"joined","code":"GUEST","lobbyInfo":${lobbyInfo()}}""")
+                            sendJson(this, """{"type":"error","code":"host-not-ready","reason":"Host not ready yet"}""")
+                            log("JOIN waiting guest=$selfId; host not ready")
+                            return
+                        }
+
+                        // Smart behavior: refreshed guest replaces stale/previous guest during bootstrap.
+                        guestId = selfId
+                        val info = lobbyInfo()
+
+                        sendJson(this, """{"type":"joined","code":"GUEST","lobbyInfo":$info}""")
+                        sendJson(this, """{"type":"lobbyUpdated","lobbyInfo":$info}""")
+                        clients[h]?.let { sendJson(it, """{"type":"lobbyUpdated","lobbyInfo":$info}""") }
+
+                        // Critical bootstrap: force handshake immediately. No approval screen, no random code.
+                        clients[h]?.let { sendJson(it, """{"type":"connect","id":"$selfId","polite":false}""") }
+                        sendJson(this, """{"type":"connect","id":"$h","polite":true}""")
+
+                        log("ACCEPTED guest=$selfId host=$h lobby=GUEST")
+                    }
+
+                    "description", "candidate" -> {
+                        val targetId = extract(text, "recipient")
+                            ?: extract(text, "receiverId")
+                            ?: otherPeer(selfId)
+
+                        if (targetId != null) {
+                            clients[targetId]?.let {
+                                sendJson(it, text)
+                                log("RELAY $type $selfId -> $targetId")
+                            } ?: log("RELAY target missing for $type: $targetId")
+                        }
+                    }
+
+                    "connected" -> {
+                        webRtcEstablished = true
+                        relayToOther(selfId, text)
+                        broadcast("""{"type":"lobbyUpdated","lobbyInfo":${lobbyInfo()}}""")
+                        log("WEBRTC ESTABLISHED host=$hostId guest=$guestId; signaling now disposable")
+                    }
+
+                    "event" -> relayToOther(selfId, text)
+
+                    "leave", "quit" -> {
+                        // Explicit user action still tears down state.
+                        if (hostId == selfId) hostId = null
+                        if (guestId == selfId) guestId = null
+                        webRtcEstablished = false
+                        relayToOther(selfId, """{"type":"disconnect","id":"$selfId","reason":"explicit-leave"}""")
+                        broadcast("""{"type":"lobbyUpdated","lobbyInfo":${lobbyInfo()}}""")
+                        log("EXPLICIT LEAVE $selfId")
+                    }
+
+                    else -> {
+                        // Smart bootstrap relay: if netlib sends extra/unknown handshake messages, pass them through.
+                        val targetId = extract(text, "recipient")
+                            ?: extract(text, "receiverId")
+                            ?: otherPeer(selfId)
+                        if (targetId != null) {
+                            clients[targetId]?.let {
+                                sendJson(it, text)
+                                log("RELAY unknown:$type $selfId -> $targetId")
+                            }
+                        }
+                    }
+                }
             }
 
             override fun onClose(code: WebSocketFrame.CloseCode?, reason: String?, initiatedByRemote: Boolean) {
                 val id = socketIds.remove(this) ?: return
                 clients.remove(id)
+                log("CLOSE $id code=$code reason=$reason established=$webRtcEstablished")
+
+                if (webRtcEstablished) {
+                    // Key smart behavior: signaling close after WebRTC is established must not kill gameplay.
+                    log("SUPPRESS disconnect broadcast after established WebRTC for $id")
+                    return
+                }
 
                 if (hostId == id) hostId = null
                 if (guestId == id) guestId = null
-
-                broadcast(json("disconnect", "id" to id))
-                broadcast(lobbyUpdated())
-                log("CLOSE $id reason=$reason")
+                relayToOther(id, """{"type":"disconnect","id":"$id","reason":"socket-close-before-established"}""")
+                broadcast("""{"type":"lobbyUpdated","lobbyInfo":${lobbyInfo()}}""")
             }
 
             override fun onPong(pong: WebSocketFrame) {}
 
             override fun onException(exception: IOException) {
-                log("EXCEPTION ${exception.message}")
+                log("WS EXCEPTION ${exception.message}")
             }
         }
-    }
-
-    private fun handle(ws: WebSocket, selfId: String, text: String) {
-        val type = extract(text, "type") ?: "unknown"
-        log("IN $selfId $type $text")
-
-        when (type) {
-            "hello" -> {
-                val requestedId = extract(text, "id")
-                if (!requestedId.isNullOrBlank() && requestedId != selfId && !clients.containsKey(requestedId)) {
-                    clients.remove(selfId)
-                    socketIds[ws] = requestedId
-                    clients[requestedId] = ws
-                    handle(ws, requestedId, text)
-                    return
-                }
-
-                send(ws, json("welcome", "id" to selfId, "peerId" to selfId, "secret" to "s$selfId"))
-                send(ws, json("credentials", "id" to selfId, "peerId" to selfId, "secret" to "s$selfId"))
-            }
-
-            "credentials" -> {
-                send(ws, json("credentials", "id" to selfId, "peerId" to selfId, "secret" to "s$selfId"))
-            }
-
-            "ping" -> send(ws, json("ping"))
-            "pong" -> send(ws, json("pong"))
-
-            "create" -> {
-                // Invitation sent. This peer becomes HOST. Always fixed code GUEST.
-                hostId = selfId
-                if (guestId == selfId) guestId = null
-
-                val joined = jsonWithLobby("joined", rid = extract(text, "rid"))
-                send(ws, joined)
-                send(ws, lobbyUpdated())
-                log("HOST INVITE ACCEPTED host=$selfId code=GUEST")
-
-                // If a guest was already waiting due refresh/order, connect immediately.
-                connectIfPossible()
-            }
-
-            "join" -> {
-                // Accept ANY join attempt. Latest non-host peer becomes current GUEST.
-                if (hostId == null) {
-                    // If guest hits first in a test, keep it waiting, but do not fail.
-                    guestId = selfId
-                    send(ws, jsonWithLobby("joined", rid = extract(text, "rid")))
-                    send(ws, lobbyUpdated())
-                    log("GUEST WAITING guest=$selfId code=GUEST")
-                    return
-                }
-
-                if (selfId != hostId) {
-                    guestId = selfId
-                }
-
-                send(ws, jsonWithLobby("joined", rid = extract(text, "rid")))
-                broadcast(lobbyUpdated())
-                log("GUEST ACCEPTED guest=$selfId host=$hostId code=GUEST")
-                connectIfPossible()
-            }
-
-            "leave", "disconnect" -> {
-                if (selfId == guestId) guestId = null
-                if (selfId == hostId) hostId = null
-                broadcast(lobbyUpdated())
-            }
-
-            "description", "candidate", "event", "connected" -> relay(text, selfId)
-
-            else -> {
-                // netlib variants differ; for test mode, relay everything unknown to the other side.
-                relay(text, selfId)
-            }
-        }
-    }
-
-    private fun connectIfPossible() {
-        val h = hostId
-        val g = guestId
-        val host = h?.let { clients[it] }
-        val guest = g?.let { clients[it] }
-
-        if (h == null || g == null || host == null || guest == null || h == g) return
-
-        val info = lobbyInfoJson()
-        send(host, """{"type":"lobbyUpdated","lobbyInfo":$info}""")
-        send(guest, """{"type":"lobbyUpdated","lobbyInfo":$info}""")
-
-        // This is the important handshake trigger used by local netlib signaling.
-        send(host, """{"type":"connect","id":"$g","polite":false}""")
-        send(guest, """{"type":"connect","id":"$h","polite":true}""")
-
-        log("CONNECT SENT host=$h guest=$g")
-    }
-
-    private fun relay(text: String, selfId: String) {
-        val targetId = extract(text, "recipient")
-            ?: extract(text, "receiverId")
-            ?: extract(text, "to")
-            ?: otherPeer(selfId)
-
-        if (targetId == null) {
-            log("NO TARGET for $selfId $text")
-            return
-        }
-
-        val target = clients[targetId]
-        if (target == null) {
-            log("TARGET MISSING $targetId for $selfId")
-            return
-        }
-
-        send(target, text)
-        log("RELAY $selfId -> $targetId")
     }
 
     private fun otherPeer(id: String): String? = when (id) {
@@ -184,27 +186,23 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
         else -> null
     }
 
-    private fun lobbyInfoJson(): String {
-        val h = hostId
-        val g = guestId
-        val players = listOfNotNull(h, g).distinct().joinToString(",") { "\"$it\"" }
-        val leader = h ?: ""
-        return """{"code":"GUEST","leader":"$leader","term":1,"players":[$players],"maxPlayers":2}"""
+    private fun relayToOther(fromId: String, text: String) {
+        val targetId = otherPeer(fromId)
+        if (targetId != null) clients[targetId]?.let { sendJson(it, text) }
     }
 
-    private fun lobbyUpdated(): String = """{"type":"lobbyUpdated","lobbyInfo":${lobbyInfoJson()}}"""
-
-    private fun jsonWithLobby(type: String, rid: String? = null): String {
-        val ridPart = if (rid.isNullOrBlank()) "" else ",\"rid\":\"$rid\""
-        return """{"type":"$type","code":"GUEST"$ridPart,"lobbyInfo":${lobbyInfoJson()}}"""
+    private fun lobbyInfo(): String {
+        val players = listOfNotNull(hostId, guestId).joinToString(",") { "\"$it\"" }
+        val leader = hostId ?: ""
+        val established = if (webRtcEstablished) "true" else "false"
+        return """{"code":"GUEST","leader":"$leader","term":1,"players":[$players],"maxPlayers":2,"established":$established}"""
     }
 
-    private fun json(type: String, vararg pairs: Pair<String, String>): String {
-        val extra = pairs.joinToString(",") { (k, v) -> "\"$k\":\"${escape(v)}\"" }
-        return if (extra.isBlank()) """{"type":"$type"}""" else """{"type":"$type",$extra}"""
+    private fun broadcast(text: String) {
+        clients.values.forEach { sendJson(it, text) }
     }
 
-    private fun send(ws: WebSocket, text: String) {
+    private fun sendJson(ws: WebSocket, text: String) {
         try {
             ws.send(text)
             log("OUT $text")
@@ -213,19 +211,12 @@ class SignalingWsServer(port: Int) : NanoWSD("0.0.0.0", port) {
         }
     }
 
-    private fun broadcast(text: String) {
-        clients.values.forEach { send(it, text) }
-    }
-
     private fun extract(json: String, key: String): String? {
-        val pattern = Regex("\"" + Regex.escape(key) + "\"\\s*:\\s*\"([^\"]+)\"")
-        return pattern.find(json)?.groupValues?.getOrNull(1)
+        return """"$key"\s*:\s*"([^"]+)""".toRegex().find(json)?.groupValues?.getOrNull(1)
     }
-
-    private fun escape(value: String): String = value.replace("\\", "\\\\").replace("\"", "\\\"")
 
     private fun log(msg: String) {
-        Log.d("PPG-SIGNAL", msg)
+        android.util.Log.d("PPG-SIGNAL", msg)
         println("PPG-SIGNAL $msg")
     }
 }
